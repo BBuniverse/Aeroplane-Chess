@@ -10,7 +10,13 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
     private final List<ChessBoardListener> listenerList = new ArrayList<>();
     private final Square[][] grid;
     private final int dimension, endDimension;
+    int[] movingList = {0, 10, 7, 4, 1, 11, 8, 5, 2, 12, 9, 6, 3};
 
+
+    /**
+     * @param dimension    13
+     * @param endDimension 6
+     */
     public ChessBoard(int dimension, int endDimension) {
         this.grid = new Square[4][dimension + endDimension];
         this.dimension = dimension;
@@ -33,7 +39,7 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
                 grid[i][j].setPiece(null);
             }
         }
-        // FIXME: Demo implementation
+        // FIXME: Demo implementation: initial for four planes at the start position
         grid[0][0].setPiece(new ChessPiece(0));
         grid[1][0].setPiece(new ChessPiece(1));
         grid[2][0].setPiece(new ChessPiece(2));
@@ -72,8 +78,18 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
     public void moveChessPiece(ChessBoardLocation src, int steps) {
         ChessBoardLocation dest = src;
         // FIXME: This just naively move the chess forward without checking anything
-        for (int i = 0; i < steps; i++) {
-            dest = nextLocation(dest);
+        System.out.println("Steps " + steps);
+        int temp;
+        int bo = 0;
+        for (int i = 1; i <= steps; i++) {
+            int index = 0;
+            for (int j = 0; j < movingList.length; j++) {
+                if (movingList[j] == dest.getIndex()) {
+                    index = j;
+                    break;
+                }
+            }
+            dest = new ChessBoardLocation((dest.getColor() + 1) % 4, movingList[index + 1]);
         }
         setChessPieceAt(dest, removeChessPieceAt(src));
     }
