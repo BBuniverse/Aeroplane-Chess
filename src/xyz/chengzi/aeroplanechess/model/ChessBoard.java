@@ -40,10 +40,10 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
             }
         }
         // FIXME: Demo implementation: initial for four planes at the start position
-        grid[0][0].setPiece(new ChessPiece(0));
-        grid[1][0].setPiece(new ChessPiece(1));
-        grid[2][0].setPiece(new ChessPiece(2));
-        grid[3][0].setPiece(new ChessPiece(3));
+        grid[0][12].setPiece(new ChessPiece(0));
+        grid[1][12].setPiece(new ChessPiece(1));
+        grid[2][12].setPiece(new ChessPiece(2));
+        grid[3][12].setPiece(new ChessPiece(3));
         listenerList.forEach(listener -> listener.onChessBoardReload(this));
     }
 
@@ -82,20 +82,35 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
     public void moveChessPiece(ChessBoardLocation src, int steps) {
         ChessBoardLocation dest = src;
         // FIXME: This just naively move the chess forward without checking anything
-        int lColor, lIndex, player = getGridAt(src).getPiece().getPlayer();
-        boolean readyToLand = false;
+        int lColor, lIndex, player = getChessPieceAt(src).getPlayer();
+        boolean readyToLand = false, landed = false;
         System.out.println(player + " got " + steps + " steps");
+
         for (int i = 1; i <= steps; i++) {
-            int index = 0;
-            for (int j = 0; j < movingList.length; j++) {
-                if (movingList[j] == dest.getIndex()) {
-                    index = j;
-                    break;
+            // Ready to land
+            if (dest.getIndex() >= 12 && player == dest.getColor()) {
+                if (landed) {
+                    lIndex = dest.getIndex() - 1;
+                } else {
+                    lIndex = dest.getIndex() + 1;
                 }
+                dest = new ChessBoardLocation(player, lIndex);
+                if (dest.getIndex() == 18) {
+                    landed = true;
+                }
+                readyToLand = true;
+            } else {
+                int index = 0;
+                for (int j = 0; j < movingList.length; j++) {
+                    if (movingList[j] == dest.getIndex()) {
+                        index = j;
+                        break;
+                    }
+                }
+                lColor = (dest.getColor() + 1) % 4;
+                lIndex = movingList[(index + 1) % movingList.length];
+                dest = new ChessBoardLocation(lColor, lIndex);
             }
-            lColor = (dest.getColor() + 1) % 4;
-            lIndex = movingList[(index + 1) % movingList.length];
-            dest = new ChessBoardLocation(lColor, lIndex);
         }
         if (!readyToLand && player == dest.getColor()) {
             dest = nextLocation(dest);
