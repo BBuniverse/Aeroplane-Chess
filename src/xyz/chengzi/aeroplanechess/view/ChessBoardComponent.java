@@ -35,6 +35,9 @@ public class ChessBoardComponent extends JComponent implements Listenable<InputL
         initGridComponents();
     }
 
+    // Dimension = 13
+    // Player 1 - 4
+    // Index 0 - 13
     private int gridLocation(int player, int index) {
         // FIXME: Calculate proper location for each grid
         int boardIndex = (1 + 13 * player + 4 * index) % (4 * dimension);
@@ -77,12 +80,14 @@ public class ChessBoardComponent extends JComponent implements Listenable<InputL
                 int gridLocation = gridLocation(player, index);
                 gridComponents[player][index] = new SquareComponent(gridSize, BOARD_COLORS[player], player, index);
                 gridComponents[player][index].setLocation(gridLocation >> 16, gridLocation & 0xffff);
+//                System.out.println(gridComponents[player][index].getPlayer() + " " + gridComponents[player][index].getX() + " " + gridComponents[player][index].getY());
                 add(gridComponents[player][index]);
             }
             for (int index = dimension; index < dimension + endDimension; index++) {
                 int gridLocation = endGridLocation(player, index - dimension);
                 gridComponents[player][index] = new SquareComponent(gridSize, BOARD_COLORS[player], player, index);
                 gridComponents[player][index].setLocation(gridLocation >> 16, gridLocation & 0xffff);
+//                System.out.println(gridComponents[player][index].getPlayer() + " " + gridComponents[player][index].getX() + " " + gridComponents[player][index].getY());
                 add(gridComponents[player][index]);
             }
         }

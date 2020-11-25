@@ -75,12 +75,16 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
         return piece;
     }
 
+    /**
+     * @param src   Current chessboard
+     * @param steps Moving steps
+     */
     public void moveChessPiece(ChessBoardLocation src, int steps) {
         ChessBoardLocation dest = src;
         // FIXME: This just naively move the chess forward without checking anything
-        System.out.println("Steps " + steps);
-        int temp;
-        int bo = 0;
+        int lColor, lIndex, player = getGridAt(src).getPiece().getPlayer();
+        boolean readyToLand = false;
+        System.out.println(player + " got " + steps + " steps");
         for (int i = 1; i <= steps; i++) {
             int index = 0;
             for (int j = 0; j < movingList.length; j++) {
@@ -89,7 +93,12 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
                     break;
                 }
             }
-            dest = new ChessBoardLocation((dest.getColor() + 1) % 4, movingList[index + 1]);
+            lColor = (dest.getColor() + 1) % 4;
+            lIndex = movingList[(index + 1) % movingList.length];
+            dest = new ChessBoardLocation(lColor, lIndex);
+        }
+        if (!readyToLand && player == dest.getColor()) {
+            dest = nextLocation(dest);
         }
         setChessPieceAt(dest, removeChessPieceAt(src));
     }

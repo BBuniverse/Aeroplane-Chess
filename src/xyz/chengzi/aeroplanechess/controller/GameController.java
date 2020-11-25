@@ -19,7 +19,7 @@ public class GameController implements InputListener, Listenable<GameStateListen
     private final ChessBoardComponent view;
     private final ChessBoard model;
 
-    private Integer rolledNumber;
+    private Integer rolledNumber; // Record the last rolling outcome
     private int currentPlayer;
 
     public GameController(ChessBoardComponent chessBoardComponent, ChessBoard chessBoard) {
