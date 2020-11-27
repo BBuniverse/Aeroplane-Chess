@@ -84,14 +84,16 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
         // FIXME: This just naively move the chess forward without checking anything
         int lColor, lIndex, player = getChessPieceAt(src).getPlayer();
         boolean readyToLand = false, landed = false;
-        System.out.println(player + " got " + steps + " steps");
+        System.out.println("ChessBoard " + player + " got " + steps + " steps");
 
         for (int i = 1; i <= steps; i++) {
             // Ready to land
             if (dest.getIndex() >= 12 && player == dest.getColor()) {
                 if (landed) {
+                    // Turn back
                     lIndex = dest.getIndex() - 1;
                 } else {
+                    // Move forward to destination
                     lIndex = dest.getIndex() + 1;
                 }
                 dest = new ChessBoardLocation(player, lIndex);
@@ -111,6 +113,9 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
                 lIndex = movingList[(index + 1) % movingList.length];
                 dest = new ChessBoardLocation(lColor, lIndex);
             }
+            if (winning(steps - i, dest.getIndex())) {
+                System.out.println("ChessBoard " + player + " win the game");
+            }
         }
         if (!readyToLand && player == dest.getColor()) {
             dest = nextLocation(dest);
@@ -121,6 +126,15 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
     public ChessBoardLocation nextLocation(ChessBoardLocation location) {
         // FIXME: This move the chess to next jump location instead of nearby next location
         return new ChessBoardLocation(location.getColor(), location.getIndex() + 1);
+    }
+
+    /**
+     * @param leftSteps how many step left
+     * @param index     18 means winning
+     * @return win or not
+     */
+    public boolean winning(int leftSteps, int index) {
+        return leftSteps == 0 && index == 18;
     }
 
     @Override

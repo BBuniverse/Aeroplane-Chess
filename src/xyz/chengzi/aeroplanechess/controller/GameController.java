@@ -57,9 +57,9 @@ public class GameController implements InputListener, Listenable<GameStateListen
         }
     }
 
-    public int nextPlayer() {
+    public void nextPlayer() {
         rolledNumber = null;
-        return currentPlayer = (currentPlayer + 1) % 4;
+        currentPlayer = (currentPlayer + 1) % 4;
     }
 
 
