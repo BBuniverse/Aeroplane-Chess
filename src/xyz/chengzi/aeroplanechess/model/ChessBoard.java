@@ -46,8 +46,8 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
             }
         }
         // FIXME: Demo implementation: initial for four planes at the start position
-        grid[0][0].setPiece(new ChessPiece(0));
-        grid[1][0].setPiece(new ChessPiece(1));
+        grid[0][4].setPiece(new ChessPiece(0));
+        grid[1][1].setPiece(new ChessPiece(1));
         grid[2][0].setPiece(new ChessPiece(2));
         grid[3][0].setPiece(new ChessPiece(3));
         listenerList.forEach(listener -> listener.onChessBoardReload(this));
@@ -124,6 +124,12 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
         }
         if (!readyToLand && player == dest.getColor()) {
             dest = nextLocation(dest);
+        }
+        if (getGridAt(dest).getPiece() != null && getGridAt(dest).getPiece().getPlayer() != player) {
+            ChessBoardLocation opponent = new ChessBoardLocation(getGridAt(dest).getPiece().getPlayer(), 0);
+            setChessPieceAt(opponent, removeChessPieceAt(dest));
+            System.out.println("ChessBoard " + PLAYER_NAMES[player] + " sent " +
+                    PLAYER_NAMES[getGridAt(opponent).getPiece().getPlayer()] + " back to hangar");
         }
         setChessPieceAt(dest, removeChessPieceAt(src));
         if (dest.getIndex() == 18) {
