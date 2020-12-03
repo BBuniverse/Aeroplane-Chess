@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ChessBoardComponent extends JComponent implements Listenable<InputListener>, ChessBoardListener {
+    private int number_Players;
     private static final Color[] BOARD_COLORS = {Color.YELLOW, Color.BLUE, Color.GREEN, Color.RED};
     private static final Color[] PIECE_COLORS = {Color.YELLOW.darker(), Color.BLUE.darker(),
             Color.GREEN.darker(), Color.RED.darker()};
@@ -28,11 +29,12 @@ public class ChessBoardComponent extends JComponent implements Listenable<InputL
      * @param dimension    13
      * @param endDimension 6
      */
-    public ChessBoardComponent(int size, int dimension, int endDimension) {
+    public ChessBoardComponent(int size, int dimension, int endDimension,int number_Players) {
         enableEvents(AWTEvent.MOUSE_EVENT_MASK);
         setLayout(null); // Use absolute layout
         setSize(size, size);
 
+        this.number_Players = number_Players;
         this.gridComponents = new SquareComponent[4][dimension + endDimension];
         this.dimension = dimension;
         this.endDimension = endDimension;
@@ -88,6 +90,15 @@ public class ChessBoardComponent extends JComponent implements Listenable<InputL
         return x << 16 | y;
     }
 
+//    /**
+//     * @param player 0-3
+//     * @param index 19-22
+//     *
+//     */
+//    private int initialGridLocation(int player, int index){
+//        int initialGridLocation = gridLocation(player,)
+//    }
+
     private void initGridComponents() {
         for (int player = 0; player < 4; player++) {
             int gridLocation;
@@ -95,6 +106,8 @@ public class ChessBoardComponent extends JComponent implements Listenable<InputL
                 gridLocation = index < dimension ? gridLocation(player, index) : endGridLocation(player, index - dimension);
                 gridComponents[player][index] = new SquareComponent(gridSize, BOARD_COLORS[player], player, index);
                 gridComponents[player][index].setLocation(gridLocation >> 16, gridLocation & 0xffff);
+                System.out.println("the x is " + (gridLocation>>16));
+                System.out.println("the y is " + (gridLocation & 0xffff));
 //                System.out.println(gridComponents[player][index].getPlayer() + " " + gridLocation + " " + gridComponents[player][index].getX() + " " + gridComponents[player][index].getY());
                 add(gridComponents[player][index]);
             }

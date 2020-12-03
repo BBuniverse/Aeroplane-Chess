@@ -21,7 +21,8 @@ public class GameFrame extends JFrame implements GameStateListener {
         controller.registerListener(this);
 
         setTitle("2020 CS102A Project Demo");
-        setSize(772, 825);
+//      change the size of the game
+        setSize(960, 960);
         setLocationRelativeTo(null); // Center the window
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLayout(null);

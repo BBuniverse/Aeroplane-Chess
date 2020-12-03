@@ -8,6 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ChessBoard implements Listenable<ChessBoardListener> {
+//    this is the number of the players
+    private int number_Players;
+//    each color has 4 planes first.
+    private final int INITIAL_PLANES = 4;
     private final List<ChessBoardListener> listenerList = new ArrayList<>();
     private final Square[][] grid;
     private final int dimension, endDimension;
@@ -18,8 +22,9 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
      * @param dimension    13
      * @param endDimension 6
      */
-    public ChessBoard(int dimension, int endDimension) {
-        this.grid = new Square[4][dimension + endDimension];
+    public ChessBoard(int dimension, int endDimension,int number_Players) {
+        this.number_Players = number_Players;
+        this.grid = new Square[number_Players][dimension + endDimension + INITIAL_PLANES];
         this.dimension = dimension;
         this.endDimension = endDimension;
 
@@ -27,7 +32,7 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
     }
 
     private void initGrid() {
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < number_Players; i++) {
             for (int j = 0; j < dimension + endDimension; j++) {
                 grid[i][j] = new Square(new ChessBoardLocation(i, j));
             }

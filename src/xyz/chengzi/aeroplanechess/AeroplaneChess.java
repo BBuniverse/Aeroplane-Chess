@@ -12,8 +12,8 @@ public class AeroplaneChess {
         System.setProperty("sun.java2d.win.uiScaleX", "96dpi");
         System.setProperty("sun.java2d.win.uiScaleY", "96dpi");
         SwingUtilities.invokeLater(() -> {
-            ChessBoardComponent chessBoardComponent = new ChessBoardComponent(760, 13, 6);
-            ChessBoard chessBoard = new ChessBoard(13, 6);
+            ChessBoardComponent chessBoardComponent = new ChessBoardComponent(760, 13, 6,4);
+            ChessBoard chessBoard = new ChessBoard(13, 6,4);
             GameController controller = new GameController(chessBoardComponent, chessBoard);
 
             GameFrame mainFrame = new GameFrame(controller);
