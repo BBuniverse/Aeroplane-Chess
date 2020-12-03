@@ -3,6 +3,7 @@ package xyz.chengzi.aeroplanechess.model;
 import xyz.chengzi.aeroplanechess.listener.ChessBoardListener;
 import xyz.chengzi.aeroplanechess.listener.Listenable;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +12,7 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
     private final Square[][] grid;
     private final int dimension, endDimension;
     int[] movingList = {0, 10, 7, 4, 1, 11, 8, 5, 2, 12, 9, 6, 3};
-
+    private static final String[] PLAYER_NAMES = {"Yellow", "Blue", "Green", "Red"};
 
     /**
      * @param dimension    13
@@ -40,10 +41,10 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
             }
         }
         // FIXME: Demo implementation: initial for four planes at the start position
-        grid[0][12].setPiece(new ChessPiece(0));
-        grid[1][12].setPiece(new ChessPiece(1));
-        grid[2][12].setPiece(new ChessPiece(2));
-        grid[3][12].setPiece(new ChessPiece(3));
+        grid[0][0].setPiece(new ChessPiece(0));
+        grid[1][0].setPiece(new ChessPiece(1));
+        grid[2][0].setPiece(new ChessPiece(2));
+        grid[3][0].setPiece(new ChessPiece(3));
         listenerList.forEach(listener -> listener.onChessBoardReload(this));
     }
 
@@ -84,7 +85,7 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
         // FIXME: This just naively move the chess forward without checking anything
         int lColor, lIndex, player = getChessPieceAt(src).getPlayer();
         boolean readyToLand = false, landed = false;
-        System.out.println("ChessBoard " + player + " got " + steps + " steps");
+        System.out.println("ChessBoard " + PLAYER_NAMES[player] + " got " + steps + " steps");
 
         for (int i = 1; i <= steps; i++) {
             // Ready to land
@@ -111,30 +112,24 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
                 }
                 lColor = (dest.getColor() + 1) % 4;
                 lIndex = movingList[(index + 1) % movingList.length];
+                boolean opponent = false;
+
                 dest = new ChessBoardLocation(lColor, lIndex);
-            }
-            if (winning(steps - i, dest.getIndex())) {
-                System.out.println("ChessBoard " + player + " win the game");
             }
         }
         if (!readyToLand && player == dest.getColor()) {
             dest = nextLocation(dest);
         }
         setChessPieceAt(dest, removeChessPieceAt(src));
+        if (dest.getIndex() == 18) {
+            JOptionPane.showMessageDialog(null, "ChessBoard " + PLAYER_NAMES[player] + " win the game",
+                    "Game Finished", JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 
     public ChessBoardLocation nextLocation(ChessBoardLocation location) {
         // FIXME: This move the chess to next jump location instead of nearby next location
         return new ChessBoardLocation(location.getColor(), location.getIndex() + 1);
-    }
-
-    /**
-     * @param leftSteps how many step left
-     * @param index     18 means winning
-     * @return win or not
-     */
-    public boolean winning(int leftSteps, int index) {
-        return leftSteps == 0 && index == 18;
     }
 
     @Override

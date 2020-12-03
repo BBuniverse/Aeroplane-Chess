@@ -43,6 +43,7 @@ public class ChessBoardComponent extends JComponent implements Listenable<InputL
     /**
      * @param player 0 - 3
      * @param index  0 - 12
+     *
      * @return location
      */
     private int gridLocation(int player, int index) {
@@ -68,6 +69,7 @@ public class ChessBoardComponent extends JComponent implements Listenable<InputL
     /**
      * @param player 0 - 3
      * @param index  13 - 18
+     *
      * @return location
      */
     private int endGridLocation(int player, int index) {
