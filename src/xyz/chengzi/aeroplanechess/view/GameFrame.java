@@ -59,12 +59,10 @@ public class GameFrame extends JFrame implements GameStateListener {
             String s = (String) JOptionPane.showInputDialog(null, "Please select your option:\n",
                     "Option", JOptionPane.PLAIN_MESSAGE, new ImageIcon("icon.png"), options, "restart");
 
-            if (s.equals("restart")) {
-                Restart(controller);
-            } else if (s.equals("load")) {
-                Load(controller);
-            } else if (s.equals("save")) {
-                Save(controller);
+            switch (s) {
+                case "restart" -> Restart(controller);
+                case "load" -> Load(controller);
+                case "save" -> Save(controller);
             }
         });
         option.setBounds(250, 756, 140, 30);
@@ -82,13 +80,8 @@ public class GameFrame extends JFrame implements GameStateListener {
                 PLAYER_NAMES[Controller.getCurrentPlayer()]));
 
         // Empty the board
-        ChessBoard board = Controller.getModel();
-        for (int player = 0; player < 4; player++) {
-            for (int index = 0; index < board.getDimension() + board.getEndDimension(); index++) {
-                ChessBoardLocation location = new ChessBoardLocation(player, index);
-                board.removeChessPieceAt(location);
-            }
-        }
+        empty(Controller);
+
         // Initial the board
         Controller.initializeGame();
     }
@@ -103,13 +96,7 @@ public class GameFrame extends JFrame implements GameStateListener {
             Controller.initializeGame();
             // Empty the board
 
-            ChessBoard board = Controller.getModel();
-            for (int player = 0; player < 4; player++) {
-                for (int index = 0; index < board.getDimension() + board.getEndDimension(); index++) {
-                    ChessBoardLocation location = new ChessBoardLocation(player, index);
-                    board.removeChessPieceAt(location);
-                }
-            }
+            empty(Controller);
             String filename = JOptionPane.showInputDialog("Please input a value");
             File file = new File("..\\Aeroplane-Chess\\localgame\\" + filename + ".txt");
 
@@ -161,6 +148,16 @@ public class GameFrame extends JFrame implements GameStateListener {
             System.out.println("GameFrame saved to " + filename);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void empty(GameController Controller) {
+        ChessBoard board = Controller.getModel();
+        for (int player = 0; player < 4; player++) {
+            for (int index = 0; index < board.getDimension() + board.getEndDimension(); index++) {
+                ChessBoardLocation location = new ChessBoardLocation(player, index);
+                board.removeChessPieceAt(location);
+            }
         }
     }
 
