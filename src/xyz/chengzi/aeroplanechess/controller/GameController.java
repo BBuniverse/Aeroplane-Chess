@@ -19,7 +19,9 @@ public class GameController implements InputListener, Listenable<GameStateListen
     private final ChessBoardComponent view;
     private final ChessBoard model;
 
-    private Integer rolledNumber; // Record the last rolling outcome
+    private Integer rolledNumber0; // Record the last rolling outcome
+    private Integer rolledNumber1;
+    private Integer rolledNumber;
     private int currentPlayer;
 
     public GameController(ChessBoardComponent chessBoardComponent, ChessBoard chessBoard) {
@@ -44,21 +46,26 @@ public class GameController implements InputListener, Listenable<GameStateListen
 
     public void initializeGame() {
         model.placeInitialPieces();
-        rolledNumber = null;
+        rolledNumber0 = null;
         currentPlayer = 0;
         listenerList.forEach(listener -> listener.onPlayerStartRound(currentPlayer));
     }
 
     public int rollDice() {
-        if (rolledNumber == null) {
-            return rolledNumber = RandomUtil.nextInt(1, 6);
+        if (rolledNumber0 == null) {
+            rolledNumber1 = RandomUtil.nextInt(1, 6);
+            return rolledNumber0 = RandomUtil.nextInt(1, 6);
         } else {
             return -1;
         }
     }
 
+    public int[] getDices() {
+        return new int[]{rolledNumber0, rolledNumber1};
+    }
+
     public void nextPlayer() {
-        rolledNumber = null;
+        rolledNumber0 = null;
         currentPlayer = (currentPlayer + 1) % 4;
     }
 
@@ -73,12 +80,18 @@ public class GameController implements InputListener, Listenable<GameStateListen
         if (rolledNumber != null) {
             ChessPiece piece = model.getChessPieceAt(location);
             if (piece.getPlayer() == currentPlayer) {
-                model.moveChessPiece(location, rolledNumber);
+                if (location.getIndex() == 0 && location.getColor() == currentPlayer && !(rolledNumber0 == 6 || rolledNumber1 == 6)) {
+                    System.out.println("Need a 6 to land");
+                } else model.moveChessPiece(location, rolledNumber);
                 listenerList.forEach(listener -> listener.onPlayerEndRound(currentPlayer));
                 nextPlayer();
                 listenerList.forEach(listener -> listener.onPlayerStartRound(currentPlayer));
             }
         }
+    }
+
+    public void changeRolledNumber(int RolledNumber) {
+        rolledNumber = RolledNumber;
     }
 
     @Override

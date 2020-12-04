@@ -41,8 +41,8 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
             }
         }
         // FIXME: Demo implementation: initial for four planes at the start position
-        grid[0][4].setPiece(new ChessPiece(0));
-        grid[1][1].setPiece(new ChessPiece(1));
+        grid[0][0].setPiece(new ChessPiece(0));
+        grid[1][0].setPiece(new ChessPiece(1));
         grid[2][0].setPiece(new ChessPiece(2));
         grid[3][0].setPiece(new ChessPiece(3));
         listenerList.forEach(listener -> listener.onChessBoardReload(this));
