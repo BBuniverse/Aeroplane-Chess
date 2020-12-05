@@ -21,7 +21,6 @@ public class GameFrame extends JFrame implements GameStateListener {
         controller.registerListener(this);
 
         setTitle("2020 CS102A Project Demo");
-//      change the size of the game
         setSize(772, 825);
         setLocationRelativeTo(null); // Center the window
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -39,13 +38,36 @@ public class GameFrame extends JFrame implements GameStateListener {
         button.addActionListener((e) -> {
             if (diceSelectorComponent.isRandomDice()) {
                 int dice = controller.rollDice();
+                int dice1 = controller.getDices()[1];
                 if (dice != -1) {
-                    statusLabel.setText(String.format("[%s] Rolled a %c (%d)",
-                            PLAYER_NAMES[controller.getCurrentPlayer()], '\u267F' + dice, dice));
+                    statusLabel.setText(String.format("[%s] Rolled a %c (%d) and %c (%d)",
+                            PLAYER_NAMES[controller.getCurrentPlayer()], '\u267F' + dice, dice, '\u267F' + dice1, dice1));
                 } else {
-                    JOptionPane.showMessageDialog(this, "You have already rolled the dice");
+                    dice = controller.getDices()[0];
+                    JOptionPane.showMessageDialog(this, "You have already rolled the dices");
                 }
+
+                String add = Math.max(dice, dice1) + " + " + Math.min(dice, dice1) + " = " + (dice + dice1);
+                String subtraction = Math.max(dice, dice1) + " - " + Math.min(dice, dice1) + " = " + (Math.abs(dice - dice1));
+                String multiple = Math.max(dice, dice1) + " * " + Math.min(dice, dice1) + " = ";
+                String divide = Math.max(dice, dice1) + " / " + Math.min(dice, dice1) + " = ";
+
+                subtraction = Math.abs(dice - dice1) != 0 ? subtraction : "Invalid";
+                multiple = dice * dice1 <= 12 ? multiple + (dice * dice1) : "Invalid";
+                int div = Math.max(dice, dice1) / Math.min(dice, dice1);
+                divide = ((double) Math.max(dice, dice1) / Math.min(dice, dice1)) % 1 == 0 ?
+                        divide + div : "Invalid";
+
+                String[] options = {add, subtraction, multiple, divide};
+                int[] steps = {dice + dice1, Math.abs(dice - dice1), dice * dice1, div};
+                int index = JOptionPane.showOptionDialog(null, "Returns the option of your choice",
+                        "Click a button",
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+
+                controller.changeRolledNumber(steps[index]);
             } else {
+                // Manually choose step
+                controller.changeRolledNumber((int) diceSelectorComponent.getSelectedDice());
                 JOptionPane.showMessageDialog(this, "You selected " + diceSelectorComponent.getSelectedDice());
             }
         });
@@ -56,14 +78,15 @@ public class GameFrame extends JFrame implements GameStateListener {
 
         JButton option = new JButton("extension");
         option.addActionListener((e) -> {
-            Object[] options = {"restart", "load", "save"};
-            String s = (String) JOptionPane.showInputDialog(null, "Please select your option:\n",
-                    "Option", JOptionPane.PLAIN_MESSAGE, new ImageIcon("icon.png"), options, "restart");
+            String[] options = {"restart", "load", "save"};
+            int index = JOptionPane.showOptionDialog(null, "Please select your options",
+                    "Click a button",
+                    JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
 
-            switch (s) {
-                case "restart": Restart(controller);
-                case "load" : Load(controller);
-                case "save" : Save(controller);
+            switch (options[index]) {
+                case "restart" -> Restart(controller);
+                case "load" -> Load(controller);
+                case "save" -> Save(controller);
             }
         });
         option.setBounds(250, 756, 140, 30);
@@ -91,14 +114,12 @@ public class GameFrame extends JFrame implements GameStateListener {
      * @param Controller Current board
      */
 
-    // Yellow 16-15-29
     public void Load(GameController Controller) {
         try {
             Controller.initializeGame();
             // Empty the board
-
             empty(Controller);
-            String filename = JOptionPane.showInputDialog("Please input a value");
+            String filename = JOptionPane.showInputDialog("Please input the local file name");
             File file = new File("..\\Aeroplane-Chess\\localgame\\" + filename + ".txt");
 
             BufferedReader in = new BufferedReader(new FileReader(file));  //
@@ -128,8 +149,8 @@ public class GameFrame extends JFrame implements GameStateListener {
             SimpleDateFormat sdf = new SimpleDateFormat();
             sdf.applyPattern("HH-mm-ss");
             Date date = new Date();
-            String filename = PLAYER_NAMES[Controller.getCurrentPlayer()] + " " + sdf.format(date) + ".txt";
-            File file = new File("..\\Aeroplane-Chess\\localgame\\" + filename);
+            String filename = PLAYER_NAMES[Controller.getCurrentPlayer()] + "-" + sdf.format(date);
+            File file = new File("..\\Aeroplane-Chess\\localgame\\" + filename + ".txt");
 
             FileWriter out = new FileWriter(file);
 
