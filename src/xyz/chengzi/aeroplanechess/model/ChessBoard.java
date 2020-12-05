@@ -2,6 +2,7 @@ package xyz.chengzi.aeroplanechess.model;
 
 import xyz.chengzi.aeroplanechess.listener.ChessBoardListener;
 import xyz.chengzi.aeroplanechess.listener.Listenable;
+import xyz.chengzi.aeroplanechess.controller.GameController;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -33,23 +34,27 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
 
     private void initGrid() {
         for (int i = 0; i < number_Players; i++) {
-            for (int j = 0; j < dimension + endDimension; j++) {
+            for (int j = 0; j < dimension + endDimension+ INITIAL_PLANES; j++) {
                 grid[i][j] = new Square(new ChessBoardLocation(i, j));
             }
         }
     }
-
+//    FIXME: initialization
     public void placeInitialPieces() {
         for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < dimension + endDimension; j++) {
+            for (int j = 0; j < dimension + endDimension + INITIAL_PLANES; j++) {
                 grid[i][j].setPiece(null);
             }
         }
-        // FIXME: Demo implementation: initial for four planes at the start position
-        grid[0][4].setPiece(new ChessPiece(0));
-        grid[1][1].setPiece(new ChessPiece(1));
-        grid[2][0].setPiece(new ChessPiece(2));
-        grid[3][0].setPiece(new ChessPiece(3));
+//         FIXME: Demo implementation: initial for four planes at the start position
+        for (int player = 0; player < number_Players ; player++) {
+            for (int initial_Index = dimension + endDimension; initial_Index < dimension + endDimension + INITIAL_PLANES; initial_Index++) {
+                grid[player][initial_Index].setPiece(new ChessPiece(player));
+                ChessPiece piece = new ChessPiece(player);
+                ChessBoardLocation location = grid[player][initial_Index].getLocation();
+                this.setChessPieceAt(location, piece);
+            }
+        }
         listenerList.forEach(listener -> listener.onChessBoardReload(this));
     }
 
@@ -135,6 +140,7 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
         if (dest.getIndex() == 18) {
             JOptionPane.showMessageDialog(null, "ChessBoard " + PLAYER_NAMES[player] + " win the game",
                     "Game Finished", JOptionPane.INFORMATION_MESSAGE);
+
         }
     }
 

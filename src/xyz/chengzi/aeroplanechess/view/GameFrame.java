@@ -22,7 +22,7 @@ public class GameFrame extends JFrame implements GameStateListener {
 
         setTitle("2020 CS102A Project Demo");
 //      change the size of the game
-        setSize(960, 960);
+        setSize(772, 825);
         setLocationRelativeTo(null); // Center the window
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLayout(null);
@@ -61,9 +61,9 @@ public class GameFrame extends JFrame implements GameStateListener {
                     "Option", JOptionPane.PLAIN_MESSAGE, new ImageIcon("icon.png"), options, "restart");
 
             switch (s) {
-                case "restart" -> Restart(controller);
-                case "load" -> Load(controller);
-                case "save" -> Save(controller);
+                case "restart": Restart(controller);
+                case "load" : Load(controller);
+                case "save" : Save(controller);
             }
         });
         option.setBounds(250, 756, 140, 30);

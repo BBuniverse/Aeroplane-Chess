@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="CS102A-AeroplaneChess">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/CS102A-AeroplaneChess.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
