@@ -18,9 +18,10 @@ public class GameFrame extends JFrame implements GameStateListener {
     private final JLabel statusLabel = new JLabel();
 
     public GameFrame(GameController controller) {
+
         controller.registerListener(this);
 
-        setTitle("2020 CS102A Project Demo");
+        setTitle("2020 CS102A Project");
         setSize(772, 825);
         setLocationRelativeTo(null); // Center the window
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

@@ -10,11 +10,11 @@ import java.util.List;
 
 public class ChessBoard implements Listenable<ChessBoardListener> {
 //    this is the number of the players
-    private int number_Players;
+    public int number_Players;
 //    each color has 4 planes first.
     private final int INITIAL_PLANES = 4;
     private final List<ChessBoardListener> listenerList = new ArrayList<>();
-    private final Square[][] grid;
+    public final Square[][] grid;
     private final int dimension, endDimension;
     int[] movingList = {0, 10, 7, 4, 1, 11, 8, 5, 2, 12, 9, 6, 3};
     private static final String[] PLAYER_NAMES = {"Yellow", "Blue", "Green", "Red"};

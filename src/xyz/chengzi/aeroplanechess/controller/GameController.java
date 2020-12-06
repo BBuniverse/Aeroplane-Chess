@@ -19,6 +19,8 @@ public class GameController implements InputListener, Listenable<GameStateListen
     private final ChessBoardComponent view;
     private final ChessBoard model;
 
+
+
     private Integer rolledNumber0; // Record the last rolling outcome
     private Integer rolledNumber1;
     private Integer rolledNumber;
@@ -66,7 +68,7 @@ public class GameController implements InputListener, Listenable<GameStateListen
 
     public void nextPlayer() {
         rolledNumber0 = null;
-        currentPlayer = (currentPlayer + 1) % 4;
+        currentPlayer = (currentPlayer + 1) % this.model.number_Players;
     }
 
 
@@ -80,10 +82,16 @@ public class GameController implements InputListener, Listenable<GameStateListen
         if (rolledNumber != null) {
             ChessPiece piece = model.getChessPieceAt(location);
             if (piece.getPlayer() == currentPlayer) {
-                if (location.getIndex() == 0 && location.getColor() == currentPlayer && !(rolledNumber0 == 6 || rolledNumber1 == 6)) {
+                if (location.getIndex() >18 && location.getColor() == currentPlayer && !(rolledNumber0 == 6 || rolledNumber1 == 6)) {
                     System.out.println("Need a 6 to land");
-                } else model.moveChessPiece(location, rolledNumber);
+                }else
+                if(location.getIndex() >18 && location.getColor() == currentPlayer && (rolledNumber0 == 6 || rolledNumber1 == 6)){
+                    model.moveChessPiece(location,6);
+                }else {
+                    model.moveChessPiece(location, rolledNumber);
+                }
                 listenerList.forEach(listener -> listener.onPlayerEndRound(currentPlayer));
+
                 nextPlayer();
                 listenerList.forEach(listener -> listener.onPlayerStartRound(currentPlayer));
             }
