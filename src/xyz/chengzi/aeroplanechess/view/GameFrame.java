@@ -39,6 +39,7 @@ public class GameFrame extends JFrame implements GameStateListener {
             if (diceSelectorComponent.isRandomDice()) {
                 int dice = controller.rollDice();
                 int dice1 = controller.getDices()[1];
+
                 if (dice != -1) {
                     statusLabel.setText(String.format("[%s] Rolled a %c (%d) and %c (%d)",
                             PLAYER_NAMES[controller.getCurrentPlayer()], '\u267F' + dice, dice, '\u267F' + dice1, dice1));
@@ -84,9 +85,9 @@ public class GameFrame extends JFrame implements GameStateListener {
                     JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
 
             switch (options[index]) {
-                case "restart" -> Restart(controller);
-                case "load" -> Load(controller);
-                case "save" -> Save(controller);
+                case "restart" : Restart(controller);
+                case "load" : Load(controller);
+                case "save" : Save(controller);
             }
         });
         option.setBounds(250, 756, 140, 30);

@@ -104,7 +104,7 @@ public class ChessBoardComponent extends JComponent implements Listenable<InputL
 //    }
 
     private void initGridComponents() {
-        for (int player = 0; player < number_Players; player++) {
+        for (int player = 0; player < INITIAL_PLANES; player++) {
             int gridLocation;
             for (int index = 0; index < dimension + endDimension; index++) {
                 gridLocation = index < dimension ? gridLocation(player, index) : endGridLocation(player, index - dimension);
