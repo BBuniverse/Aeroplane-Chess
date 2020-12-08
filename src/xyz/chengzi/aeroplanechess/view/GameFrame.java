@@ -65,8 +65,11 @@ public class GameFrame extends JFrame implements GameStateListener {
                 int index = JOptionPane.showOptionDialog(null, "Returns the option of your choice",
                         "Click a button",
                         JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
-
-                controller.changeRolledNumber(steps[index]);
+                if(steps[index] <0 ){
+                    controller.changeRolledNumber(0);
+                }else{
+                    controller.changeRolledNumber(steps[index]);
+                }
             } else {
                 // Manually choose step
                 controller.changeRolledNumber((int) diceSelectorComponent.getSelectedDice());
@@ -86,9 +89,18 @@ public class GameFrame extends JFrame implements GameStateListener {
                     JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
 
             switch (options[index]) {
-                case "restart" : Restart(controller);
-                case "load" : Load(controller);
-                case "save" : Save(controller);
+                case "restart" : {
+                    Restart(controller);
+                    break;
+                }
+                case "load" :{
+                    Load(controller);
+                    break;
+                }
+                case "save" :{
+                    Save(controller);
+                    break;
+                }
             }
         });
         option.setBounds(250, 756, 140, 30);
@@ -152,12 +164,13 @@ public class GameFrame extends JFrame implements GameStateListener {
             sdf.applyPattern("HH-mm-ss");
             Date date = new Date();
             String filename = PLAYER_NAMES[Controller.getCurrentPlayer()] + "-" + sdf.format(date);
-            File file = new File("..\\Aeroplane-Chess\\localgame\\" + filename + ".txt");
-
-            FileWriter out = new FileWriter(file);
+            File file;
+            FileWriter out;
+            file = new File("..\\Aeroplane-Chess\\localgame\\" + filename + ".txt");
+            out = new FileWriter(file);
 
             ChessBoard board = Controller.getModel();
-            for (int player = 0; player < 4; player++) {
+            for (int player = 0; player < Controller.getModel().number_Players; player++) {
                 for (int index = 0; index < board.getDimension() + board.getEndDimension(); index++) {
                     ChessBoardLocation location = new ChessBoardLocation(player, index);
                     Square square = Controller.getModel().getGridAt(location);
@@ -172,12 +185,13 @@ public class GameFrame extends JFrame implements GameStateListener {
             System.out.println("GameFrame saved to " + filename);
         } catch (IOException e) {
             e.printStackTrace();
+            System.out.println("Sorry, no such file available");
         }
     }
 
     public void empty(GameController Controller) {
         ChessBoard board = Controller.getModel();
-        for (int player = 0; player < 4; player++) {
+        for (int player = 0; player < Controller.getModel().number_Players; player++) {
             for (int index = 0; index < board.getDimension() + board.getEndDimension(); index++) {
                 ChessBoardLocation location = new ChessBoardLocation(player, index);
                 board.removeChessPieceAt(location);

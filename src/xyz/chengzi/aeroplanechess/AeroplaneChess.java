@@ -21,6 +21,8 @@ public class AeroplaneChess {
         TextField number_Input = new TextField("Please Input the number of players you want");
         JButton read_Input = new JButton("Check");
         read_Input.setSize(50,50);
+        number_Input.setLocation(300,400);
+
         number_Input.setSize(200,50);
         number_Input.setLocation(300,300);
         read_Input.addActionListener(e -> {
