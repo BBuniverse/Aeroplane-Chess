@@ -119,7 +119,8 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
                         System.out.println("ChessBoard " + PLAYER_NAMES[player] + " sent " +
                                 PLAYER_NAMES[opponent_Player] + " back to hangar");
                     }
-                    if(getGridAt(dest).getPiece().getPlayer()==player){
+//                    这是当一架飞机遇到了同一类飞机的时候
+                    else{
                         occupied_Init = true;
                         moveChessPiece(dest,4);
                         setChessPieceAt(dest,new ChessPiece(player));
@@ -155,14 +156,34 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
                     }
                     lColor = (dest.getColor() + 1) % 4;
                     lIndex = movingList[(index + 1) % movingList.length];
-                    boolean opponent = false;
+//                  if it is because it touches the same color then it should be able to
+                    if(occupied_Init){
+                        ChessBoardLocation location_On_The_Road = new ChessBoardLocation(lColor,lIndex);
+                        //if the piece is different from itself then push back
+                        if(getGridAt(location_On_The_Road)!= null){
+                            ChessPiece chessPieceLocal = getChessPieceAt(location_On_The_Road);
+                            if((chessPieceLocal != null) && chessPieceLocal.getPlayer() != player){
+                                int oppo_Player_Local = chessPieceLocal.getPlayer();
+                                removeChessPieceAt(location_On_The_Road);
+                                for (int index_Handar = 19; index_Handar < 23; index_Handar++) {
+                                    if(grid[oppo_Player_Local][index_Handar].getPiece() ==null){
+                                        setChessPieceAt(grid[oppo_Player_Local][index_Handar].getLocation(), new ChessPiece(oppo_Player_Local));
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
 
                     dest = new ChessBoardLocation(lColor, lIndex);
                 }
             }
             if (!readyToLand && player == dest.getColor() ) {
                 if(!occupied_Init){
+                    ChessBoardLocation start = dest;
                     dest = nextLocation(dest);
+                    ChessBoardLocation end = dest;
+                    sendBackPath(start,end,player);
                 }else{
                     occupied_Init = false;
                 }
@@ -202,6 +223,50 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
             }
             }
     }
+    private void sendBackPath(ChessBoardLocation start_Point, ChessBoardLocation end_Point,int player_Itself){
+        System.out.println("228");
+        int lColor, lIndex;
+        int index = 0;
+
+        for (int j = 0; j < movingList.length; j++) {
+            if (movingList[j] == start_Point.getIndex()) {
+                index = j;
+                break;
+            }
+        }
+        ChessBoardLocation next_Position;
+        lColor = (start_Point.getColor()) % 4;
+        lIndex = movingList[(index) % movingList.length];
+
+        next_Position = new ChessBoardLocation(lColor,lIndex);
+
+        while(next_Position.getColor() != end_Point.getColor() || next_Position.getIndex() != end_Point.getIndex()){
+
+            lColor = (next_Position.getColor() + 1) % 4;
+
+            for (int j = 0; j < movingList.length; j++) {
+                if (movingList[j] == next_Position.getIndex()) {
+                    index = j;
+                    break;
+                }
+            }
+            lIndex = movingList[(index + 1) % movingList.length];
+            next_Position = new ChessBoardLocation(lColor,lIndex);
+
+            if( getChessPieceAt(next_Position)!=null && getChessPieceAt(next_Position).getPlayer() != player_Itself){
+                int oppo_Player = getChessPieceAt(next_Position).getPlayer();
+                for (int index_Oppo = 19; index_Oppo < 23; index_Oppo++) {
+                    if(grid[oppo_Player][index_Oppo].getPiece()==null){
+                        removeChessPieceAt(next_Position);
+                        setChessPieceAt(grid[oppo_Player][index_Oppo].getLocation(),new ChessPiece(oppo_Player));
+                        break;
+                    }
+                }
+            }
+        }
+
+    }
+
 
     public ChessBoardLocation nextLocation(ChessBoardLocation location) {
         // FIXME: This move the chess to next jump location instead of nearby next location
