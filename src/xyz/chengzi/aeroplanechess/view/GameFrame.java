@@ -65,7 +65,7 @@ public class GameFrame extends JFrame implements GameStateListener {
                 int index = JOptionPane.showOptionDialog(null, "Returns the option of your choice",
                         "Click a button",
                         JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
-                if(steps[index] <0 ){
+                if((index<0) ||(index>3) || steps[index] <0 ){
                     controller.changeRolledNumber(0);
                 }else{
                     controller.changeRolledNumber(steps[index]);

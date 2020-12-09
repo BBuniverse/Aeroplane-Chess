@@ -94,6 +94,9 @@ public class GameController implements InputListener, Listenable<GameStateListen
 
                 nextPlayer();
                 listenerList.forEach(listener -> listener.onPlayerStartRound(currentPlayer));
+            }else{
+                System.out.println("It is not your turn !");
+                System.out.println("There is "+this.model.stacks[location.getColor()][location.getIndex()].planeQuantity+" Planes");
             }
         }
     }
