@@ -72,11 +72,11 @@ public class GameFrame extends JFrame implements GameStateListener {
                 String[] options = {add, subtraction, multiple, divide};
                 int[] steps = {dice + dice1, Math.abs(dice - dice1), dice * dice1, div};
                 int index = JOptionPane.showOptionDialog(null, "Returns the option of your choice",
-                        "Click a button",
+                        PLAYER_NAMES[controller.getCurrentPlayer()] + " Click a button",
                         JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
-                if((index<0) ||(index>3) || steps[index] <0 ){
+                if ((index < 0) || (index > 3) || steps[index] < 0) {
                     controller.changeRolledNumber(0);
-                }else{
+                } else {
                     controller.changeRolledNumber(steps[index]);
                 }
             } else {
@@ -98,15 +98,15 @@ public class GameFrame extends JFrame implements GameStateListener {
                     JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
 
             switch (options[index]) {
-                case "restart" : {
+                case "restart": {
                     Restart(controller);
                     break;
                 }
-                case "load" :{
+                case "load": {
                     Load(controller);
                     break;
                 }
-                case "save" :{
+                case "save": {
                     Save(controller);
                     break;
                 }
@@ -161,6 +161,7 @@ public class GameFrame extends JFrame implements GameStateListener {
 
         } catch (IOException e) {
             e.printStackTrace();
+            System.out.println("GameFrame Sorry, no such file available");
         }
     }
 
@@ -180,7 +181,7 @@ public class GameFrame extends JFrame implements GameStateListener {
 
             ChessBoard board = Controller.getModel();
             for (int player = 0; player < Controller.getModel().number_Players; player++) {
-                for (int index = 0; index < board.getDimension() + board.getEndDimension(); index++) {
+                for (int index = 0; index < board.getDimension() + board.getEndDimension() + 4; index++) {
                     ChessBoardLocation location = new ChessBoardLocation(player, index);
                     Square square = Controller.getModel().getGridAt(location);
                     if (square.getPiece() != null) {
@@ -194,14 +195,13 @@ public class GameFrame extends JFrame implements GameStateListener {
             System.out.println("GameFrame saved to " + filename);
         } catch (IOException e) {
             e.printStackTrace();
-            System.out.println("Sorry, no such file available");
         }
     }
 
     public void empty(GameController Controller) {
         ChessBoard board = Controller.getModel();
         for (int player = 0; player < Controller.getModel().number_Players; player++) {
-            for (int index = 0; index < board.getDimension() + board.getEndDimension(); index++) {
+            for (int index = 0; index < board.getDimension() + board.getEndDimension() + 4; index++) {
                 ChessBoardLocation location = new ChessBoardLocation(player, index);
                 board.removeChessPieceAt(location);
             }

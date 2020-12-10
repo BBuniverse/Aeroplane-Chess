@@ -33,13 +33,13 @@ public class ChessBoardComponent extends JComponent implements Listenable<InputL
      * @param dimension    13
      * @param endDimension 6
      */
-    public ChessBoardComponent(int size, int dimension, int endDimension,int number_Players) {
+    public ChessBoardComponent(int size, int dimension, int endDimension, int number_Players) {
         enableEvents(AWTEvent.MOUSE_EVENT_MASK);
         setLayout(null); // Use absolute layout
         setSize(size, size);
 
         this.number_Players = number_Players;
-        this.gridComponents = new SquareComponent[4][dimension + endDimension+INITIAL_PLANES];
+        this.gridComponents = new SquareComponent[4][dimension + endDimension + INITIAL_PLANES];
         this.dimension = dimension;
         this.endDimension = endDimension;
         this.gridSize = size / (dimension + 1 + INITIAL_PLANES);
@@ -116,21 +116,21 @@ public class ChessBoardComponent extends JComponent implements Listenable<InputL
 
             int local_Player;
 
-            if(player == 2){
-                local_Player =3;
-            }else if(player == 3){
+            if (player == 2) {
+                local_Player = 3;
+            } else if (player == 3) {
                 local_Player = 2;
-            }else{
+            } else {
                 local_Player = player;
             }
             int initial_y = (local_Player / 2) * ((dimension + 3) * gridSize);
-            int initial_x = (local_Player % 2 )* ((dimension + 3) * gridSize);
+            int initial_x = (local_Player % 2) * ((dimension + 3) * gridSize);
 
             for (int i = 0; i < 4; i++) {
-                    int index_Dim = i + dimension + endDimension;
-                    gridComponents[player][index_Dim] = new SquareComponent(gridSize,BOARD_COLORS[player],player,index_Dim);
-                    gridComponents[player][index_Dim].setLocation(initial_x + i % 2 * gridSize, initial_y + i / 2 * gridSize);
-                    add(gridComponents[player][index_Dim]);
+                int index_Dim = i + dimension + endDimension;
+                gridComponents[player][index_Dim] = new SquareComponent(gridSize, BOARD_COLORS[player], player, index_Dim);
+                gridComponents[player][index_Dim].setLocation(initial_x + i % 2 * gridSize, initial_y + i / 2 * gridSize);
+                add(gridComponents[player][index_Dim]);
             }
 
         }
