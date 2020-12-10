@@ -113,13 +113,24 @@ public class ChessBoardComponent extends JComponent implements Listenable<InputL
                 add(gridComponents[player][index]);
             }
 
-            int initial_y = (player / 2) * ((dimension + 3) * gridSize);
-            int initial_x = (player % 2 )* ((dimension + 3) * gridSize);
+
+            int local_Player;
+
+            if(player == 2){
+                local_Player =3;
+            }else if(player == 3){
+                local_Player = 2;
+            }else{
+                local_Player = player;
+            }
+            int initial_y = (local_Player / 2) * ((dimension + 3) * gridSize);
+            int initial_x = (local_Player % 2 )* ((dimension + 3) * gridSize);
+
             for (int i = 0; i < 4; i++) {
-                int index_Dim = i + dimension + endDimension;
-                gridComponents[player][index_Dim] = new SquareComponent(gridSize,BOARD_COLORS[player],player,index_Dim);
-                gridComponents[player][index_Dim].setLocation(initial_x + i % 2 * gridSize,initial_y + i /2 *gridSize);
-                add(gridComponents[player][index_Dim]);
+                    int index_Dim = i + dimension + endDimension;
+                    gridComponents[player][index_Dim] = new SquareComponent(gridSize,BOARD_COLORS[player],player,index_Dim);
+                    gridComponents[player][index_Dim].setLocation(initial_x + i % 2 * gridSize, initial_y + i / 2 * gridSize);
+                    add(gridComponents[player][index_Dim]);
             }
 
         }

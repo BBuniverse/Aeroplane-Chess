@@ -102,7 +102,7 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
     public void moveChessPiece(ChessBoardLocation src, int steps) {
 
         ChessBoardLocation dest = src;
-        System.out.println(dest.getIndex());
+//        System.out.println(dest.getIndex());
         // FIXME: This just naively move the chess forward without checking anything
         int lColor, lIndex, player = getChessPieceAt(src).getPlayer();
         boolean readyToLand = false, landed = false;
