@@ -20,7 +20,6 @@ public class GameController implements InputListener, Listenable<GameStateListen
     private final ChessBoard model;
 
 
-
     private Integer rolledNumber0; // Record the last rolling outcome
     private Integer rolledNumber1;
     private Integer rolledNumber;
@@ -82,23 +81,22 @@ public class GameController implements InputListener, Listenable<GameStateListen
         if (rolledNumber != null) {
             ChessPiece piece = model.getChessPieceAt(location);
             if (piece.getPlayer() == currentPlayer) {
-                if (location.getIndex() >18 && location.getColor() == currentPlayer && !(rolledNumber0 == 6 || rolledNumber1 == 6)) {
-                    System.out.println("Need a 6 to land");
-                }else
-                if(location.getIndex() >18 && location.getColor() == currentPlayer && (rolledNumber0 == 6 || rolledNumber1 == 6)){
-                    model.moveChessPiece(location,6);
-                }else {
+                if (location.getIndex() > 18 && location.getColor() == currentPlayer && !(rolledNumber0 == 6 || rolledNumber1 == 6)) {
+                    System.out.println("GameController Need a 6 to land");
+                } else if (location.getIndex() > 18 && location.getColor() == currentPlayer && (rolledNumber0 == 6 || rolledNumber1 == 6)) {
+                    model.moveChessPiece(location, 6);
+                } else {
                     model.moveChessPiece(location, rolledNumber);
                 }
-                listenerList.forEach(listener -> listener.onPlayerEndRound(currentPlayer));
 
+                listenerList.forEach(listener -> listener.onPlayerEndRound(currentPlayer));
                 nextPlayer();
                 listenerList.forEach(listener -> listener.onPlayerStartRound(currentPlayer));
-            }else{
-                System.out.println("It is not your turn !");
-                System.out.println("There is "+this.model.stacks[location.getColor()][location.getIndex()].planeQuantity+" Planes");
+            } else {
+                System.out.println("GameController It is not your turn !");
             }
         }
+
     }
 
     public void changeRolledNumber(int RolledNumber) {
