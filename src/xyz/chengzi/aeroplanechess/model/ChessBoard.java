@@ -21,7 +21,7 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
     int[] movingList = {0, 10, 7, 4, 1, 11, 8, 5, 2, 12, 9, 6, 3};
     private static final String[] PLAYER_NAMES = {"Yellow", "Blue", "Green", "Red"};
 
-    public int[] shortCutIndex = {3,6,9,12};
+    public int[] shortCutIndex = {3,9};
 
 //    public void
 
@@ -98,7 +98,6 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
      * @param src   Current chessboard
      * @param steps Moving steps
      */
-    private boolean  occupied_Init = false;
     public void moveChessPiece(ChessBoardLocation src, int steps) {
 
         ChessBoardLocation dest = src;
@@ -116,8 +115,12 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
                 if(getGridAt(dest).getPiece()!= null ){
                     if(getGridAt(dest).getPiece().getPlayer() != player){
                         int opponent_Player = getGridAt(dest).getPiece().getPlayer();
-                        int oppo = stacks[dest.getColor()][dest.getIndex()].planeQuantity;
-                        stacks[dest.getColor()][dest.getIndex()]=null;
+//                        int oppo = stacks[dest.getColor()][dest.getIndex()].planeQuantity;
+                        int oppo = getGridAt(dest).number_Of_Planes;
+
+//                        stacks[dest.getColor()][dest.getIndex()]=null;
+                        getGridAt(dest).number_Of_Planes=0;
+
                         int index_Local = 0;
                         for (int opppnent_Index = 19; opppnent_Index <23 ; opppnent_Index++) {
                             if(grid[opponent_Player][opppnent_Index].getPiece() == null){
@@ -132,25 +135,28 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
                                 PLAYER_NAMES[opponent_Player] + " back to hangar");
                         removeChessPieceAt(dest);
                     }
-//                    这是当一架飞机遇到了同一类飞机的时候
                     else{
-//                        occupied_Init = true;
-                        stacks[dest.getColor()][dest.getIndex()].planeQuantity += 1;
+//                        stacks[dest.getColor()][dest.getIndex()].planeQuantity += 1;
+                        getGridAt(dest).number_Of_Planes +=1;
                         setChessPieceAt(dest, removeChessPieceAt(src));
                         return;
                     }
                 }
                 setChessPieceAt(dest, removeChessPieceAt(src));
-                stacks[dest.getColor()][dest.getIndex()] =  new Stack(new ChessPiece(player),dest,1);
+//                stacks[dest.getColor()][dest.getIndex()] =  new Stack(new ChessPiece(player),dest,1);
+                getGridAt(dest).number_Of_Planes =1;
             }
         }else{
             System.out.println("ChessBoard " + PLAYER_NAMES[player] + " got " + steps + " steps");
-            int number_Planes = stacks [dest.getColor()][dest.getIndex()].planeQuantity;
-            stacks [dest.getColor()][dest.getIndex()] = null;
+//            int number_Planes = stacks [dest.getColor()][dest.getIndex()].planeQuantity;
+            int number_Planes = getGridAt(dest).number_Of_Planes;
+//            stacks [dest.getColor()][dest.getIndex()] = null;
+            getGridAt(dest).number_Of_Planes = 0;
             for (int i = 1; i <= steps; i++) {
                 // Ready to land
                 if (dest.getIndex() >= 12 && player == dest.getColor()) {
-                    stacks[dest.getColor()][dest.getIndex()] = null;
+//                    stacks[dest.getColor()][dest.getIndex()] = null;
+                    getGridAt(dest).number_Of_Planes = 0;
                     if (landed) {
                         // Turn back
                         lIndex = dest.getIndex() - 1;
@@ -188,8 +194,10 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
             if (getGridAt(dest).getPiece() != null ) {
                 if( getGridAt(dest).getPiece().getPlayer() != player){
                     ChessBoardLocation opponent = getGridAt(dest).getLocation();
-                    int quantity_Oppo = stacks[opponent.getColor()][opponent.getIndex()].planeQuantity;
-                    stacks[opponent.getColor()][opponent.getIndex()] = null;
+//                    int quantity_Oppo = stacks[opponent.getColor()][opponent.getIndex()].planeQuantity;
+                    int quantity_Oppo = getGridAt(opponent).number_Of_Planes;
+//                    stacks[opponent.getColor()][opponent.getIndex()] = null;
+                    getGridAt(opponent).number_Of_Planes = 0;
                     System.out.println("ChessBoard " + PLAYER_NAMES[player] + " sent " +
                             PLAYER_NAMES[getGridAt(opponent).getPiece().getPlayer()] + " back to hangar");
 
@@ -206,15 +214,16 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
                     }
                     removeChessPieceAt(opponent);
                 }else{
-                    stacks[dest.getColor()][dest.getIndex()].planeQuantity +=1;
+//                    stacks[dest.getColor()][dest.getIndex()].planeQuantity +=1;
+                    getGridAt(dest).number_Of_Planes+=1;
                     setChessPieceAt(dest, removeChessPieceAt(src));
                     return;
                 }
             }
 
             setChessPieceAt(dest, removeChessPieceAt(src));
-            stacks[dest.getColor()][dest.getIndex()] = new Stack(new ChessPiece(player),dest,number_Planes);
-
+//            stacks[dest.getColor()][dest.getIndex()] = new Stack(new ChessPiece(player),dest,number_Planes);
+            getGridAt(dest).number_Of_Planes=number_Planes;
             if (dest.getIndex() == 18) {
                 JOptionPane.showMessageDialog(null, "ChessBoard " + PLAYER_NAMES[player] + " win the game",
                         "Game Finished", JOptionPane.INFORMATION_MESSAGE);
@@ -222,6 +231,7 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
             }
             }
     }
+//    private void
     private void sendBackPath(ChessBoardLocation start_Point, ChessBoardLocation end_Point,int player_Itself){
         int lColor, lIndex;
         int index = 0;
@@ -240,8 +250,10 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
         while(next_Position.getColor() != end_Point.getColor() || next_Position.getIndex() != end_Point.getIndex()){
             if( getChessPieceAt(next_Position)!=null && getChessPieceAt(next_Position).getPlayer() != player_Itself){
                 int oppo_Player = getChessPieceAt(next_Position).getPlayer();
-                int numbers = stacks[next_Position.getColor()][next_Position.getIndex()].planeQuantity;
-                stacks[next_Position.getColor()][next_Position.getIndex()] =  null;
+//                int numbers = stacks[next_Position.getColor()][next_Position.getIndex()].planeQuantity;
+                int numbers = getGridAt(next_Position).number_Of_Planes;
+//                stacks[next_Position.getColor()][next_Position.getIndex()] =  null;
+                getGridAt(next_Position).number_Of_Planes = 0;
                 int index_Planes =0;
                 for (int index_Oppo = 19; index_Oppo < 23; index_Oppo++) {
                     if(grid[oppo_Player][index_Oppo].getPiece()==null){

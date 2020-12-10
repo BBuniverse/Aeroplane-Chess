@@ -91,12 +91,12 @@ public class GameController implements InputListener, Listenable<GameStateListen
                     model.moveChessPiece(location, rolledNumber);
                 }
                 listenerList.forEach(listener -> listener.onPlayerEndRound(currentPlayer));
-
+//                FIXME: here we need to have 3 chances in dice
                 nextPlayer();
                 listenerList.forEach(listener -> listener.onPlayerStartRound(currentPlayer));
             }else{
                 System.out.println("It is not your turn !");
-                System.out.println("There is "+this.model.stacks[location.getColor()][location.getIndex()].planeQuantity+" Planes");
+                System.out.println("There is "+this.model.getGridAt(location).number_Of_Planes+" Planes");
             }
         }
     }

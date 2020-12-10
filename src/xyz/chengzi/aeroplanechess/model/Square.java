@@ -3,6 +3,7 @@ package xyz.chengzi.aeroplanechess.model;
 public class Square {
     private final ChessBoardLocation location;
     private ChessPiece piece;
+    public int number_Of_Planes;
 
     public Square(ChessBoardLocation location) {
         this.location = location;

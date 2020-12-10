@@ -7,7 +7,9 @@ import xyz.chengzi.aeroplanechess.model.ChessBoardLocation;
 import xyz.chengzi.aeroplanechess.model.ChessPiece;
 import xyz.chengzi.aeroplanechess.model.Square;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.*;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -26,6 +28,13 @@ public class GameFrame extends JFrame implements GameStateListener {
         setLocationRelativeTo(null); // Center the window
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLayout(null);
+
+//        ImageIcon icon=new ImageIcon("F:\\Aeroplane-Chess\\src\\xyz\\chengzi\\aeroplanechess\\view\\sky.jpg");
+//        System.out.println(icon);
+//        JLabel label=new JLabel(icon);
+//        label.setBounds(0,0,772,825);
+//        this.add(label,new Integer(Integer.MIN_VALUE));
+
 
         statusLabel.setBounds(0, 758, 400, 20);
         statusLabel.setFont(statusLabel.getFont().deriveFont(18.0f));

@@ -9,7 +9,7 @@ public class SquareComponent extends JPanel {
     private final Color color;
     private final int player;
     private final int index;
-    public int[] shortCutIndex = {3,6,9,12};
+    public int[] shortCutIndex = {3,7};
 
     public SquareComponent(int size, Color color, int player, int index) {
         setLayout(new GridLayout(1, 1)); // Use 1x1 grid layout
