@@ -79,6 +79,9 @@ public class GameController implements InputListener, Listenable<GameStateListen
 
     @Override
     public void onPlayerClickChessPiece(ChessBoardLocation location, ChessComponent component) {
+        if(this.model.landed_Planes[currentPlayer] == 4){
+            nextPlayer();
+        }
         if (rolledNumber != null) {
             ChessPiece piece = model.getChessPieceAt(location);
             if (piece.getPlayer() == currentPlayer) {
@@ -86,7 +89,11 @@ public class GameController implements InputListener, Listenable<GameStateListen
                     System.out.println("Need a 6 to land");
                 }else
                 if(location.getIndex() >18 && location.getColor() == currentPlayer && (rolledNumber0 == 6 || rolledNumber1 == 6)){
-                    model.moveChessPiece(location,6);
+                    if(this.model.landed_Planes[currentPlayer] + this.model.onTheBoardPlanes[currentPlayer]==4){
+                        System.out.println("Sorry, you can only have 4 planes on the board and handars");
+                    }else{
+                        model.moveChessPiece(location,6);
+                    }
                 }else {
                     model.moveChessPiece(location, rolledNumber);
                 }

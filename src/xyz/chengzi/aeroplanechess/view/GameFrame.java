@@ -46,44 +46,44 @@ public class GameFrame extends JFrame implements GameStateListener {
 
         JButton button = new JButton("roll");
         button.addActionListener((e) -> {
-            if (diceSelectorComponent.isRandomDice()) {
-                int dice = controller.rollDice();
-                int dice1 = controller.getDices()[1];
+                if (diceSelectorComponent.isRandomDice()) {
+                    int dice = controller.rollDice();
+                    int dice1 = controller.getDices()[1];
 
-                if (dice != -1) {
-                    statusLabel.setText(String.format("[%s] Rolled a %c (%d) and %c (%d)",
-                            PLAYER_NAMES[controller.getCurrentPlayer()], '\u267F' + dice, dice, '\u267F' + dice1, dice1));
+                    if (dice != -1) {
+                        statusLabel.setText(String.format("[%s] Rolled a %c (%d) and %c (%d)",
+                                PLAYER_NAMES[controller.getCurrentPlayer()], '\u267F' + dice, dice, '\u267F' + dice1, dice1));
+                    } else {
+                        dice = controller.getDices()[0];
+                        JOptionPane.showMessageDialog(this, "You have already rolled the dices");
+                    }
+
+                    String add = Math.max(dice, dice1) + " + " + Math.min(dice, dice1) + " = " + (dice + dice1);
+                    String subtraction = Math.max(dice, dice1) + " - " + Math.min(dice, dice1) + " = " + (Math.abs(dice - dice1));
+                    String multiple = Math.max(dice, dice1) + " * " + Math.min(dice, dice1) + " = ";
+                    String divide = Math.max(dice, dice1) + " / " + Math.min(dice, dice1) + " = ";
+
+                    subtraction = Math.abs(dice - dice1) != 0 ? subtraction : "Invalid";
+                    multiple = dice * dice1 <= 12 ? multiple + (dice * dice1) : "Invalid";
+                    int div = Math.max(dice, dice1) / Math.min(dice, dice1);
+                    divide = ((double) Math.max(dice, dice1) / Math.min(dice, dice1)) % 1 == 0 ?
+                            divide + div : "Invalid";
+
+                    String[] options = {add, subtraction, multiple, divide};
+                    int[] steps = {dice + dice1, Math.abs(dice - dice1), dice * dice1, div};
+                    int index = JOptionPane.showOptionDialog(null, "Returns the option of your choice",
+                            PLAYER_NAMES[controller.getCurrentPlayer()] + " Click a button",
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+                    if ((index < 0) || (index > 3) || steps[index] < 0) {
+                        controller.changeRolledNumber(0);
+                    } else {
+                        controller.changeRolledNumber(steps[index]);
+                    }
                 } else {
-                    dice = controller.getDices()[0];
-                    JOptionPane.showMessageDialog(this, "You have already rolled the dices");
+                    // Manually choose step
+                    controller.changeRolledNumber((int) diceSelectorComponent.getSelectedDice());
+                    JOptionPane.showMessageDialog(this, "You selected " + diceSelectorComponent.getSelectedDice());
                 }
-
-                String add = Math.max(dice, dice1) + " + " + Math.min(dice, dice1) + " = " + (dice + dice1);
-                String subtraction = Math.max(dice, dice1) + " - " + Math.min(dice, dice1) + " = " + (Math.abs(dice - dice1));
-                String multiple = Math.max(dice, dice1) + " * " + Math.min(dice, dice1) + " = ";
-                String divide = Math.max(dice, dice1) + " / " + Math.min(dice, dice1) + " = ";
-
-                subtraction = Math.abs(dice - dice1) != 0 ? subtraction : "Invalid";
-                multiple = dice * dice1 <= 12 ? multiple + (dice * dice1) : "Invalid";
-                int div = Math.max(dice, dice1) / Math.min(dice, dice1);
-                divide = ((double) Math.max(dice, dice1) / Math.min(dice, dice1)) % 1 == 0 ?
-                        divide + div : "Invalid";
-
-                String[] options = {add, subtraction, multiple, divide};
-                int[] steps = {dice + dice1, Math.abs(dice - dice1), dice * dice1, div};
-                int index = JOptionPane.showOptionDialog(null, "Returns the option of your choice",
-                        PLAYER_NAMES[controller.getCurrentPlayer()] + " Click a button",
-                        JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
-                if ((index < 0) || (index > 3) || steps[index] < 0) {
-                    controller.changeRolledNumber(0);
-                } else {
-                    controller.changeRolledNumber(steps[index]);
-                }
-            } else {
-                // Manually choose step
-                controller.changeRolledNumber((int) diceSelectorComponent.getSelectedDice());
-                JOptionPane.showMessageDialog(this, "You selected " + diceSelectorComponent.getSelectedDice());
-            }
         });
         button.setFont(button.getFont().deriveFont(18.0f));
         button.setBounds(668, 756, 90, 30);

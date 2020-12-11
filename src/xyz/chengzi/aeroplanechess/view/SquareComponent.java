@@ -9,7 +9,7 @@ public class SquareComponent extends JPanel {
     private final Color color;
     private final int player;
     private final int index;
-    public int[] shortCutIndex = {3,7};
+    private int[] shortCutIndex = {4,7};
 
     public SquareComponent(int size, Color color, int player, int index) {
         setLayout(new GridLayout(1, 1)); // Use 1x1 grid layout
@@ -47,14 +47,15 @@ public class SquareComponent extends JPanel {
         g.fillOval(0, 0, getWidth() - 1, getHeight() - 1);
 
         for (int i = 0; i <shortCutIndex.length ; i++) {
-            if(shortCutIndex[i] == this.getIndex()){
-                g.setColor(color.brighter());
+            if (shortCutIndex[i] == this.getIndex()){
+                g.setColor(color);
                 int x [] = {getWidth()/2,getWidth(),getWidth()/2,0};
                 int y [] = {0,getWidth()/2 ,getWidth(),getWidth()/2};
                 g.drawPolygon(x,y,4);
                 g.fillPolygon(x,y,4);
             }
         }
+
 
         g.setColor(Color.BLACK);
         g.drawOval(0, 0, getWidth() - 1, getHeight() - 1);

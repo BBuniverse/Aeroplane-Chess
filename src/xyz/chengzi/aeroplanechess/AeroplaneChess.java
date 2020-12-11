@@ -52,9 +52,5 @@ public class AeroplaneChess {
         windows_Choose.add(number_Input);
         windows_Choose.add(read_Input);
         windows_Choose.setVisible(true);
-
-
     }
-
-
 }
