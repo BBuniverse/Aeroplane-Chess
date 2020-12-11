@@ -20,7 +20,6 @@ public class GameController implements InputListener, Listenable<GameStateListen
     private final ChessBoard model;
 
 
-
     private Integer rolledNumber0; // Record the last rolling outcome
     private Integer rolledNumber1;
     private Integer rolledNumber;
@@ -79,32 +78,43 @@ public class GameController implements InputListener, Listenable<GameStateListen
 
     @Override
     public void onPlayerClickChessPiece(ChessBoardLocation location, ChessComponent component) {
-        if(this.model.landed_Planes[currentPlayer] == 4){
+        if (this.model.landed_Planes[currentPlayer] == 4) {
             nextPlayer();
         }
         if (rolledNumber != null) {
             ChessPiece piece = model.getChessPieceAt(location);
             if (piece.getPlayer() == currentPlayer) {
-                if (location.getIndex() >18 && location.getColor() == currentPlayer && !(rolledNumber0 == 6 || rolledNumber1 == 6)) {
-                    System.out.println("Need a 6 to land");
-                }else
-                if(location.getIndex() >18 && location.getColor() == currentPlayer && (rolledNumber0 == 6 || rolledNumber1 == 6)){
-                    if(this.model.landed_Planes[currentPlayer] + this.model.onTheBoardPlanes[currentPlayer]==4){
-                        System.out.println("Sorry, you can only have 4 planes on the board and handars");
-                    }else{
-                        model.moveChessPiece(location,6);
+                // Manually choose the dice number
+                if (rolledNumber > 50) {
+                    rolledNumber /= 100;
+                    if (location.getIndex() > 18 && location.getColor() == currentPlayer && rolledNumber != 6) {
+                        System.out.println("Need a 6 to land");
+                    } else {
+                        model.moveChessPiece(location, rolledNumber);
                     }
-                }else {
-                    model.moveChessPiece(location, rolledNumber);
+                    rolledNumber = null;
+                } else {
+                    if (location.getIndex() > 18 && location.getColor() == currentPlayer && !(rolledNumber0 == 6 || rolledNumber1 == 6)) {
+                        System.out.println("Need a 6 to land");
+                    } else if (location.getIndex() > 18 && location.getColor() == currentPlayer && (rolledNumber0 == 6 || rolledNumber1 == 6)) {
+                        if (this.model.landed_Planes[currentPlayer] + this.model.onTheBoardPlanes[currentPlayer] == 4) {
+                            System.out.println("Sorry, you can only have 4 planes on the board and hangars");
+                        } else {
+                            model.moveChessPiece(location, 6);
+                        }
+                    } else {
+                        model.moveChessPiece(location, rolledNumber);
+                    }
                 }
                 listenerList.forEach(listener -> listener.onPlayerEndRound(currentPlayer));
-//                FIXME: here we need to have 3 chances in dice
+                // FIXME: here we need to have 3 chances in dice
                 nextPlayer();
                 listenerList.forEach(listener -> listener.onPlayerStartRound(currentPlayer));
-            }else{
+            } else {
                 System.out.println("It is not your turn !");
-                System.out.println("There is "+this.model.getGridAt(location).number_Of_Planes+" Planes");
             }
+        } else {
+            System.out.println("GameController There is " + this.model.getGridAt(location).number_Of_Planes + " Planes");
         }
     }
 
