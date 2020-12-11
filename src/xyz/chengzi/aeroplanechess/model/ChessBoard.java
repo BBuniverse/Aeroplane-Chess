@@ -249,8 +249,19 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
                     }
                 }
                 removeChessPieceAt(dest);
-                JOptionPane.showMessageDialog(null, "ChessBoard " + PLAYER_NAMES[player] ,
-                        "Finished "+ getGridAt(dest).number_Of_Planes + " Planes.", JOptionPane.INFORMATION_MESSAGE);
+                int player_Left = 4;
+                for (int i = 0; i <landed_Planes.length ; i++) {
+                    if(landed_Planes[i] == 4){
+                        player_Left--;
+                    }
+                }
+                if(player_Left == 1){
+                    JOptionPane.showMessageDialog(null, "GAME OVER" + PLAYER_NAMES[player] ,
+                            "Loses "+ getGridAt(dest).number_Of_Planes + " Planes.", JOptionPane.INFORMATION_MESSAGE);
+                }
+                JOptionPane.showMessageDialog(null, "ChessBoard " + PLAYER_NAMES[player] + "Finish"
+                                + getGridAt(dest).number_Of_Planes + " Planes.",
+                        "Finished ", JOptionPane.INFORMATION_MESSAGE);
             }
             }
     }
