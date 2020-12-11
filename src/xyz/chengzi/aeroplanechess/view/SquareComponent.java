@@ -1,6 +1,5 @@
 package xyz.chengzi.aeroplanechess.view;
 
-import xyz.chengzi.aeroplanechess.model.ChessBoard;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,7 +8,7 @@ public class SquareComponent extends JPanel {
     private final Color color;
     private final int player;
     private final int index;
-    private int[] shortCutIndex = {4,7};
+    private final int[] shortCutIndex = {4, 7};
 
     public SquareComponent(int size, Color color, int player, int index) {
         setLayout(new GridLayout(1, 1)); // Use 1x1 grid layout
@@ -46,16 +45,16 @@ public class SquareComponent extends JPanel {
         g.setColor(Color.WHITE);
         g.fillOval(0, 0, getWidth() - 1, getHeight() - 1);
 
-        for (int i = 0; i <shortCutIndex.length ; i++) {
-            if (shortCutIndex[i] == this.getIndex()){
+        // Paint the shortcut sign
+        for (int cutIndex : shortCutIndex) {
+            if (cutIndex == this.getIndex()) {
                 g.setColor(color);
-                int x [] = {getWidth()/2,getWidth(),getWidth()/2,0};
-                int y [] = {0,getWidth()/2 ,getWidth(),getWidth()/2};
-                g.drawPolygon(x,y,4);
-                g.fillPolygon(x,y,4);
+                int x[] = {getWidth() / 2, getWidth(), getWidth() / 2, 0};
+                int y[] = {0, getWidth() / 2, getWidth(), getWidth() / 2};
+                g.drawPolygon(x, y, 4);
+                g.fillPolygon(x, y, 4);
             }
         }
-
 
         g.setColor(Color.BLACK);
         g.drawOval(0, 0, getWidth() - 1, getHeight() - 1);

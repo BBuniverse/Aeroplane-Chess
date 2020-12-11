@@ -8,6 +8,7 @@ public final class RandomUtil {
     /**
      * @param begin 1
      * @param end   6
+     *
      * @return a number between 1 to 6
      */
     public static int nextInt(int begin, int end) {

@@ -17,6 +17,10 @@ public class Square {
         return piece;
     }
 
+    public int getNumber_Of_Planes(){
+        return number_Of_Planes;
+    }
+
     public void setPiece(ChessPiece piece) {
         this.piece = piece;
     }
