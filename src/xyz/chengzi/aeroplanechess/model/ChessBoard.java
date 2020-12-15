@@ -20,6 +20,7 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
     public int[] landed_Planes = {0, 0, 0, 0};
     public int[] onTheBoardPlanes = {0, 0, 0, 0};
     private final int[] shortCutIndex = {4, 7};
+//    public ArrayList<ChessBoardLocation> record_Round= new ArrayList<ChessBoardLocation>();
 
 //    public void
 
@@ -123,14 +124,17 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
                         System.out.println("ChessBoard " + PLAYER_NAMES[player] + " sent " +
                                 PLAYER_NAMES[playerToHangar] + " back to hangar");
                         removeChessPieceAt(dest);
+
                     } else {
                         getGridAt(dest).number_Of_Planes += 1;
                         setChessPieceAt(dest, removeChessPieceAt(src));
+//                        record_Round.add(dest);
                         return;
                     }
                 }
                 onTheBoardPlanes[player]++;
                 setChessPieceAt(dest, removeChessPieceAt(src));
+//                record_Round.add(dest);
                 getGridAt(dest).number_Of_Planes = 1;
             }
         } else {
@@ -175,20 +179,13 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
 
             // Jumping moving
             if (!readyToLand && player == dest.getColor() && dest.getIndex() < 12) {
-                ChessBoardLocation start = dest;
                 dest = nextLocation(dest);
-                ChessBoardLocation end = dest;
-                sendBackPath(start, end, player);
+            }else {
+                // Shortcut moving
+                if (dest.getIndex() == shortCutIndex[0] && player == dest.getColor()) {
+                    dest = new ChessBoardLocation(dest.getColor(), shortCutIndex[1]);
+                }
             }
-
-            // Shortcut moving
-            if (dest.getIndex() == shortCutIndex[0] && player == dest.getColor()) {
-                ChessBoardLocation start = dest;
-                dest = new ChessBoardLocation(dest.getColor(), shortCutIndex[1]);
-                ChessBoardLocation end = dest;
-                sendBackPath(start, end, player);
-            }
-
             if (getGridAt(dest).getPiece() != null) {
                 if (getGridAt(dest).getPiece().getPlayer() != player) {
                     ChessBoardLocation opponent = getGridAt(dest).getLocation();
@@ -293,6 +290,9 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
     public ChessBoardLocation nextLocation(ChessBoardLocation location) {
         // FIXME: This move the chess to next jump location instead of nearby next location
         return new ChessBoardLocation(location.getColor(), location.getIndex() + 1);
+    }
+    public void Battle(int player1,int player2, ChessBoardLocation location){
+        int winner = Integer.MIN_VALUE;
     }
 
     @Override
