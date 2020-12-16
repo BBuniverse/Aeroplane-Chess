@@ -83,11 +83,12 @@ public class GameFrame extends JFrame implements GameStateListener {
 //                if ((index < 0) || (index > 3) || steps[index] < 0) {
 //                    controller.changeRolledNumber(0);
 //                } else {
-                controller.changeRolledNumber(steps[index]);
+                controller.changeRolledNumber(steps[index], 0);
 //                }
             } else {
                 // Manually choose steps
-                controller.changeRolledNumber((int) diceSelectorComponent.getSelectedDice() * 100);
+                String dices = diceSelectorComponent.getSelectedDice().toString();
+                controller.changeRolledNumber(Integer.parseInt(String.valueOf(dices.charAt(0))), Integer.parseInt(String.valueOf(dices.charAt(2))));
                 JOptionPane.showMessageDialog(this, "You selected " + diceSelectorComponent.getSelectedDice());
             }
         });

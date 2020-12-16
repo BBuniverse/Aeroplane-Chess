@@ -20,8 +20,8 @@ public class GameController implements InputListener, Listenable<GameStateListen
     private final ChessBoard model;
 
 
-    private Integer rolledNumber0; // Record the last rolling outcome
-    private Integer rolledNumber1;
+    private Integer rolledNumber0 = 0; // Record the last rolling outcome
+    private Integer rolledNumber1 = 0;
     private Integer rolledNumber;
     private int currentPlayer;
 
@@ -66,8 +66,14 @@ public class GameController implements InputListener, Listenable<GameStateListen
     }
 
     public void nextPlayer() {
-        rolledNumber0 = null;
+        rolledNumber = null;
+        rolledNumber0 = 0;
+        rolledNumber1 = 0;
         currentPlayer = (currentPlayer + 1) % this.model.number_Players;
+    }
+
+    public void previousPlayer() {
+        currentPlayer = (currentPlayer - 1) % this.model.number_Players;
     }
 
 
@@ -75,9 +81,18 @@ public class GameController implements InputListener, Listenable<GameStateListen
     public void onPlayerClickSquare(ChessBoardLocation location, SquareComponent component) {
         System.out.println("clicked " + location.getColor() + "," + location.getIndex());
     }
-    private  int round = 1;
+
+    private int round = 1;
+    private ChessBoardLocation roundLocation = null;
+
     @Override
     public void onPlayerClickChessPiece(ChessBoardLocation location, ChessComponent component) {
+        boolean hasASix = rolledNumber0 == 6 || rolledNumber1 == 6;
+        boolean selfHangar = location.getColor() == currentPlayer;
+
+        // Record the original location when dice >= 10 for 3 times
+        if (roundLocation == null) roundLocation = location;
+
         if (this.model.landed_Planes[currentPlayer] == 4) {
             nextPlayer();
         }
@@ -86,17 +101,17 @@ public class GameController implements InputListener, Listenable<GameStateListen
             ChessPiece piece = model.getChessPieceAt(location);
             if (piece.getPlayer() == currentPlayer) {
                 // Manually choose the dice number
-                if (rolledNumber > 50) {
+                if (rolledNumber > 120) {
                     rolledNumber /= 100;
-                    if (location.getIndex() > 18 && location.getColor() == currentPlayer && rolledNumber != 6) {
+                    if (location.getIndex() > 18 && selfHangar && rolledNumber != 6) {
                         System.out.println("Need a 6 to land");
                     } else {
                         model.moveChessPiece(location, rolledNumber);
                     }
                 } else {
-                    if (location.getIndex() > 18 && location.getColor() == currentPlayer && !(rolledNumber0 == 6 || rolledNumber1 == 6)) {
+                    if (location.getIndex() > 18 && selfHangar && !hasASix) {
                         System.out.println("Need a 6 to land");
-                    } else if (location.getIndex() > 18 && location.getColor() == currentPlayer && (rolledNumber0 == 6 || rolledNumber1 == 6)) {
+                    } else if (location.getIndex() > 18 && selfHangar && hasASix) {
                         if (this.model.landed_Planes[currentPlayer] + this.model.onTheBoardPlanes[currentPlayer] == 4) {
                             System.out.println("Sorry, you can only have 4 planes on the board and hangars");
                         } else {
@@ -106,34 +121,42 @@ public class GameController implements InputListener, Listenable<GameStateListen
                         model.moveChessPiece(location, rolledNumber);
                     }
                 }
-                rolledNumber = null;
 
-//              if the sum of rolledNumbers is more than 10
+                // If the sum of rolledNumbers is more than 10
                 listenerList.forEach(listener -> listener.onPlayerEndRound(currentPlayer));
 
-                if(rolledNumber1 + rolledNumber0 > 10){
-
+                if (rolledNumber1 + rolledNumber0 >= 10) {
                     //if the round is 3 and then next player then send back former 2
-                    if(round == 3){
-
+                    if (round > 3) {
+                        round = 1;
+                        // TODO remove piece to the original position
+                        model.setChessPieceAt(roundLocation, piece);
                         nextPlayer();
                     }
-                    round ++;
+                    round++;
+                } else {
+                    nextPlayer();
                 }
 
+                rolledNumber = null;
                 listenerList.forEach(listener -> listener.onPlayerStartRound(currentPlayer));
-
-
             } else {
-                System.out.println("It is not your turn !");
+                System.out.println("GameControllerIt is not your turn !");
             }
         } else {
+            // Need to roll the dice
             System.out.println("GameController There is " + this.model.getGridAt(location).number_Of_Planes + " Planes");
         }
     }
 
-    public void changeRolledNumber(int RolledNumber) {
-        rolledNumber = RolledNumber;
+    public void changeRolledNumber(int RolledNumber, int temp) {
+        if (temp == 0) {
+            rolledNumber = RolledNumber;
+        } else {
+            rolledNumber0 = RolledNumber;
+            rolledNumber1 = temp;
+            rolledNumber = rolledNumber0 + rolledNumber1;
+        }
     }
 
     @Override

@@ -7,7 +7,7 @@ import java.awt.event.ItemListener;
 public class DiceSelectorComponent extends JComponent implements ItemListener {
     private JRadioButton manualDiceRadio;
     private JRadioButton randomDiceRadio;
-    private JComboBox<Integer> diceComboBox;
+    private JComboBox<String> diceComboBox;
     private boolean randomDice = true;
 
     public DiceSelectorComponent() {
@@ -16,7 +16,9 @@ public class DiceSelectorComponent extends JComponent implements ItemListener {
 
         diceComboBox = new JComboBox<>();
         for (int i = 1; i <= 6; i++) {
-            diceComboBox.addItem(i);
+            for (int j = i; j <= 6; j++) {
+                diceComboBox.addItem(i + " " + j);
+            }
         }
         diceComboBox.setLocation(0, 0);
         diceComboBox.setSize(80, 25);
