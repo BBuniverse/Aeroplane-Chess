@@ -3,9 +3,7 @@ package xyz.chengzi.aeroplanechess.controller;
 import xyz.chengzi.aeroplanechess.listener.GameStateListener;
 import xyz.chengzi.aeroplanechess.listener.InputListener;
 import xyz.chengzi.aeroplanechess.listener.Listenable;
-import xyz.chengzi.aeroplanechess.model.ChessBoard;
-import xyz.chengzi.aeroplanechess.model.ChessBoardLocation;
-import xyz.chengzi.aeroplanechess.model.ChessPiece;
+import xyz.chengzi.aeroplanechess.model.*;
 import xyz.chengzi.aeroplanechess.util.RandomUtil;
 import xyz.chengzi.aeroplanechess.view.ChessBoardComponent;
 import xyz.chengzi.aeroplanechess.view.ChessComponent;
@@ -85,6 +83,8 @@ public class GameController implements InputListener, Listenable<GameStateListen
     private int round = 1;
     private ChessBoardLocation roundLocation = null;
 
+    ArrayList<Snapshot> snapshots = new ArrayList<>();
+
     @Override
     public void onPlayerClickChessPiece(ChessBoardLocation location, ChessComponent component) {
         boolean hasASix = rolledNumber0 == 6 || rolledNumber1 == 6;
@@ -103,12 +103,31 @@ public class GameController implements InputListener, Listenable<GameStateListen
                 // Manually choose the dice number
                 if (rolledNumber > 120) {
                     rolledNumber /= 100;
-                    if (location.getIndex() > 18 && selfHangar && rolledNumber != 6) {
+                    if (location.getIndex() > 18 && selfHangar && !hasASix) {
                         System.out.println("Need a 6 to land");
                     } else {
-                        model.moveChessPiece(location, rolledNumber);
+                        if (rolledNumber >= 10) {
+                            if (round == 3) {
+                                round = 1;
+                                model.setChessPieceAt(roundLocation, model.removeChessPieceAt(location));
+                                nextPlayer();
+                            } else {
+                                if (location.getIndex() > 18) {
+                                    model.moveChessPiece(location, 6);
+                                } else model.moveChessPiece(location, rolledNumber);
+                                round++;
+                            }
+                        } else {
+                            if (location.getIndex() > 18) {
+                                model.moveChessPiece(location, 6);
+                            } else model.moveChessPiece(location, rolledNumber);
+                            nextPlayer();
+                        }
                     }
                 } else {
+                    // TODO send random back when dice > 10 for 3 times
+                    // Random dices
+                    System.out.println(rolledNumber0 + " + " + rolledNumber1);
                     if (location.getIndex() > 18 && selfHangar && !hasASix) {
                         System.out.println("Need a 6 to land");
                     } else if (location.getIndex() > 18 && selfHangar && hasASix) {
@@ -122,26 +141,24 @@ public class GameController implements InputListener, Listenable<GameStateListen
                     }
                 }
 
-                // If the sum of rolledNumbers is more than 10
                 listenerList.forEach(listener -> listener.onPlayerEndRound(currentPlayer));
 
-                if (rolledNumber1 + rolledNumber0 >= 10) {
-                    //if the round is 3 and then next player then send back former 2
-                    if (round > 3) {
-                        round = 1;
-                        // TODO remove piece to the original position
-                        model.setChessPieceAt(roundLocation, piece);
-                        nextPlayer();
-                    }
-                    round++;
-                } else {
-                    nextPlayer();
-                }
+//                if (rolledNumber1 + rolledNumber0 >= 10) {
+//                    //if the round is 3 and then next player then send back former 2
+//                    if (round > 3) {
+//                        round = 1;
+//                        model.setChessPieceAt(roundLocation, piece);
+//                        nextPlayer();
+//                    }
+//                    round++;
+//                } else {
+//                    nextPlayer();
+//                }
 
                 rolledNumber = null;
                 listenerList.forEach(listener -> listener.onPlayerStartRound(currentPlayer));
             } else {
-                System.out.println("GameControllerIt is not your turn !");
+                System.out.println("GameController It is not your turn !");
             }
         } else {
             // Need to roll the dice
@@ -155,7 +172,7 @@ public class GameController implements InputListener, Listenable<GameStateListen
         } else {
             rolledNumber0 = RolledNumber;
             rolledNumber1 = temp;
-            rolledNumber = rolledNumber0 + rolledNumber1;
+            rolledNumber = (rolledNumber0 + rolledNumber1) * 100;
         }
     }
 
