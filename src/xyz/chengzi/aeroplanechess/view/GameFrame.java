@@ -27,7 +27,7 @@ public class GameFrame extends JFrame implements GameStateListener {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLayout(null);
 
-//        ImageIcon icon=new ImageIcon("F:\\Aeroplane-Chess\\src\\xyz\\chengzi\\aeroplanechess\\view\\sky.jpg");
+//        ImageIcon icon=new ImageIcon("..\\Aeroplane-Chess\\src\\xyz\\chengzi\\aeroplanechess\\view\\sky.jpg");
 //        System.out.println(icon);
 //        JLabel label=new JLabel(icon);
 //        label.setBounds(0,0,772,825);
@@ -46,13 +46,13 @@ public class GameFrame extends JFrame implements GameStateListener {
         button.addActionListener((e) -> {
             if (diceSelectorComponent.isRandomDice()) {
                 int dice = controller.rollDice();
-                int dice1 = controller.getDices()[1];
+                int dice1 = controller.getDice1();
 
                 if (dice != -1) {
                     statusLabel.setText(String.format("[%s] Rolled a %c (%d) and %c (%d)",
                             PLAYER_NAMES[controller.getCurrentPlayer()], '\u267F' + dice, dice, '\u267F' + dice1, dice1));
                 } else {
-                    dice = controller.getDices()[0];
+                    dice = controller.getDice0();
                     JOptionPane.showMessageDialog(this, "You have already rolled the dices");
                 }
 
@@ -79,12 +79,8 @@ public class GameFrame extends JFrame implements GameStateListener {
                 int index = JOptionPane.showOptionDialog(null, "Returns the option of your choice",
                         PLAYER_NAMES[controller.getCurrentPlayer()] + " Click a button",
                         JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
-//
-//                if ((index < 0) || (index > 3) || steps[index] < 0) {
-//                    controller.changeRolledNumber(0);
-//                } else {
+
                 controller.changeRolledNumber(steps[index], 0);
-//                }
             } else {
                 // Manually choose steps
                 String dices = diceSelectorComponent.getSelectedDice().toString();
@@ -161,8 +157,9 @@ public class GameFrame extends JFrame implements GameStateListener {
                 int index = Integer.parseInt(input[2]);
                 int numPlane = Integer.parseInt(input[3]);
                 int landed = Integer.parseInt(input[4]);
+                int moved  = Integer.parseInt(input[5]);
 
-                ChessPiece piece = new ChessPiece(player, landed);
+                ChessPiece piece = new ChessPiece(player, landed, moved);
                 ChessBoardLocation location = new ChessBoardLocation(color, index);
                 Controller.getModel().setChessPieceAt(location, piece);
                 Controller.getModel().grid[color][index].number_Of_Planes = numPlane;
@@ -196,9 +193,10 @@ public class GameFrame extends JFrame implements GameStateListener {
                     Square square = Controller.getModel().getGridAt(location);
                     if (square.getPiece() != null) {
 
-                        // Player, color, index, numberOfPlanes, finished
+                        // Player, color, index, numberOfPlanes, finished, moved
                         out.write(square.getPiece().getPlayer() + "\t" + location.getColor() +
-                                "\t" + location.getIndex() + "\t" + square.number_Of_Planes + "\t" + square.getPiece().finished());
+                                "\t" + location.getIndex() + "\t" + square.getNumber_Of_Planes() + "\t" + square.getPiece().finished() +
+                                "\t" + square.getPiece().getMoved());
                         out.write("\r\n");
                     }
                 }
