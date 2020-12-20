@@ -8,9 +8,13 @@ import xyz.chengzi.aeroplanechess.view.GameFrame;
 
 
 import javax.swing.*;
+import java.applet.Applet;
+import java.applet.AudioClip;
 import java.awt.*;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.net.MalformedURLException;
+import java.net.URL;
 
 public class AeroplaneChess {
     public static void main(String[] args) {
@@ -60,6 +64,7 @@ public class AeroplaneChess {
                         chessBoard.number_Bots = response[0] + 1;
                         chessBoard.cleverness = clever[0];
                     }
+                    play_Music();
                     GameController controller = new GameController(chessBoardComponent, chessBoard);
                     GameFrame mainFrame = new GameFrame(controller);
                     mainFrame.add(chessBoardComponent);
@@ -88,11 +93,20 @@ public class AeroplaneChess {
                     null, cleverness,cleverness[0]);
     }
     public static void play_Music(){
-//        try{
-//
-//        }catch (MalformedURLException e){
-//
-//        }
 
+        try {
+            URL cb;
+            File f = new File(""); // 引号里面的是音乐文件所在的路径
+            cb = f.toURL();
+            AudioClip aau;
+            aau = Applet.newAudioClip(cb);
+
+            aau.play();
+            aau.loop();
+        } catch (MalformedURLException e) {
+
+            e.printStackTrace();
+
+        }
     }
 }
