@@ -157,6 +157,7 @@ public class GameFrame extends JFrame implements GameStateListener {
         JOptionPane.showMessageDialog(this, "Robot chose "+steps_Choose);
         ChessBoardLocation location;
         boolean find_IT = false;
+
         for (int player_Index = 0; player_Index < controller.getModel().INITIAL_PLANES; player_Index++) {
             for (int position_Index = 0; position_Index < 23; position_Index++) {
                 ChessBoardLocation location_Local = new ChessBoardLocation(player_Index,position_Index);
