@@ -113,6 +113,8 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
             return;
         }
         if(game_Over){
+            JOptionPane.showMessageDialog(null, "Please Don't press since the game is over",
+                    "Game over", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
         // Hangar landing part
@@ -265,13 +267,16 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
                                 + getGridAt(dest).number_Of_Planes + " Planes.",
                         "Finished ", JOptionPane.INFORMATION_MESSAGE);
                 int number_Finished = 0;
-                int index_Loser = 0;
+                int index_Loser = -1;
                 for (int i = 0; i < landed_Planes.length; i++) {
                     if(landed_Planes[i] ==4){
                         number_Finished++;
                     }else{
-                        index_Loser = i;
+                        if(index_Loser<0) {
+                            index_Loser = i;
+                        }
                     }
+
                 }
                 game_Over = (number_Finished == number_Players - 1);
                 if(game_Over){

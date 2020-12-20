@@ -55,7 +55,8 @@ public class GameController implements InputListener, Listenable<GameStateListen
     public int rollDice() {
         if (rolledNumber0 == null) {
             rolledNumber1 = RandomUtil.nextInt(1, 6);
-            return rolledNumber0 = RandomUtil.nextInt(1, 6);
+            rolledNumber0 = RandomUtil.nextInt(1, 6);
+            return rolledNumber0;
         } else {
             return -1;
         }
@@ -197,16 +198,15 @@ public class GameController implements InputListener, Listenable<GameStateListen
             eraseMovement();
             nextPlayer();
         } else {
+            if (location.getIndex() > 18) {
+                model.moveChessPiece(location, 6);
+            } else {
+                model.moveChessPiece(location, rolledNumber);
+            }
+            hasBeenMoved = true;
             for (int i = 0; i <getModel().number_Players; i++) {
                 nextPlayer();
             }
-
-//            if (location.getIndex() > 18) {
-//                model.moveChessPiece(location, 6);
-//            } else {
-//                model.moveChessPiece(location, rolledNumber);
-//            }
-            hasBeenMoved = true;
             round++;
         }
         rolledNumber = null;

@@ -75,7 +75,7 @@ public class GameFrame extends JFrame implements GameStateListener {
                         ((double) Math.max(dice, dice1) / Math.min(dice, dice1)) % 1 == 0 ? div : 0
                 };
 //                if the player is the bot
-                if(controller.getModel().number_Bots >0 && (controller.getCurrentPlayer() >= (controller.getModel().number_Bots))){
+                if(controller.getModel().number_Bots >0 && (controller.getCurrentPlayer() >= (controller.getModel().INITIAL_PLANES-controller.getModel().number_Bots))){
                     make_The_Simple_Bot_Move(steps,controller);
 
                 }else {
@@ -125,6 +125,7 @@ public class GameFrame extends JFrame implements GameStateListener {
     }
 
     public void make_The_Simple_Bot_Move(int[] steps, GameController controller){
+        System.out.println(controller.getCurrentPlayer());
         JOptionPane.showMessageDialog(this, "Robot chose"+steps[0]);
         for (int index = 0; index < steps.length; index++) {
             System.out.println(steps[index]);
