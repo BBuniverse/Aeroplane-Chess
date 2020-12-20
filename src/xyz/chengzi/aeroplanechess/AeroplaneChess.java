@@ -36,7 +36,7 @@ public class AeroplaneChess {
             if (number_Of_Player[0] > 4 || number_Of_Player[0] < 2) {
                 System.out.println("AeroplaneChess Please input an Integer between 2-4");
             } else {
-                int[] response ={0};
+                int[] response ={-1};
                 boolean[] clever= {false};
                 if(choose_AI_Interface()==1) {
                         clever[0] = (choose_Cleverness()==1);
@@ -55,8 +55,10 @@ public class AeroplaneChess {
 
                     ChessBoardComponent chessBoardComponent = new ChessBoardComponent(760, 13, 6, number_Of_Player[0]);
                     ChessBoard chessBoard = new ChessBoard(13, 6, number_Of_Player[0]);
-                    chessBoard.number_Bots = response[0]+1;
-                    chessBoard.cleverness = clever[0];
+                    if(response[0]>=0) {
+                        chessBoard.number_Bots = response[0] + 1;
+                        chessBoard.cleverness = clever[0];
+                    }
                     GameController controller = new GameController(chessBoardComponent, chessBoard);
                     GameFrame mainFrame = new GameFrame(controller);
                     mainFrame.add(chessBoardComponent);
