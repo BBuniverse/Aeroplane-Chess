@@ -82,11 +82,13 @@ public class GameFrame extends JFrame implements GameStateListener {
                     }
 
                 }else {
-                    int index = JOptionPane.showOptionDialog(null, "Returns the option of your choice",
+                    int index = -1;
+                    index = JOptionPane.showOptionDialog(null, "Returns the option of your choice",
                             PLAYER_NAMES[controller.getCurrentPlayer()] + " Click a button",
                             JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
-
-                    controller.changeRolledNumber(steps[index], 0);
+                    if(index>=0) {
+                        controller.changeRolledNumber(steps[index], 0);
+                    }
                 }
             } else {
                 // Manually choose steps
