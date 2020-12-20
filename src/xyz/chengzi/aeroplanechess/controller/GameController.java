@@ -78,7 +78,7 @@ public class GameController implements InputListener, Listenable<GameStateListen
         round = 1;
 
         // Empty the movement for current player
-        for (int player = 0; player < model.number_Players; player++) {
+        for (int player = 0; player < model.INITIAL_PLANES; player++) {
             for (int index = 0; index < 23; index++) {
                 ChessPiece piece = model.grid[player][index].getPiece();
                 if (piece != null && piece.moved == 1) {
@@ -128,8 +128,9 @@ public class GameController implements InputListener, Listenable<GameStateListen
                             nextPlayer();
                         }
                     } else {
-                        if (rolledNumber >= 10) {
+                        if (rolledNumber0+rolledNumber1 >= 10) {
                             roundTest(location);
+                            return;
                         } else {
                             if (location.getIndex() > 18) {
                                 model.moveChessPiece(location, 6);
@@ -151,8 +152,10 @@ public class GameController implements InputListener, Listenable<GameStateListen
                         }
                     } else {
                         // Ready to count for 3 times
-                        if (rolledNumber >= 10) {
+                        System.out.println(rolledNumber);
+                        if (rolledNumber0+rolledNumber1>=10) {
                             roundTest(location);
+                            return;
                         } else {
                             if (location.getIndex() > 18 && selfHangar && hasASix && rolledNumber != 0) {
                                 model.moveChessPiece(location, 6);
@@ -162,8 +165,9 @@ public class GameController implements InputListener, Listenable<GameStateListen
                             nextPlayer();
                         }
                     }
-                    if (!hasBeenMoved)
+                    if (!hasBeenMoved) {
                         JOptionPane.showMessageDialog(null, "Please move a plane");
+                    }
                 }
 
                 listenerList.forEach(listener -> listener.onPlayerEndRound(currentPlayer));
@@ -204,10 +208,14 @@ public class GameController implements InputListener, Listenable<GameStateListen
                 model.moveChessPiece(location, rolledNumber);
             }
             hasBeenMoved = true;
+            int local_Round = round;
             for (int i = 0; i <getModel().number_Players; i++) {
                 nextPlayer();
             }
+            round = local_Round;
             round++;
+            System.out.println(getClass().toString()+" "+round);
+            return;
         }
         rolledNumber = null;
     }
