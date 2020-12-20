@@ -52,13 +52,9 @@ public class GameController implements InputListener, Listenable<GameStateListen
     }
 
     public int rollDice() {
-        if (rolledNumber0 == null) {
             rolledNumber1 = RandomUtil.nextInt(1, 6);
             rolledNumber0 = RandomUtil.nextInt(1, 6);
             return rolledNumber0;
-        } else {
-            return -1;
-        }
     }
 
     public int getDice0() {
