@@ -81,7 +81,7 @@ public class GameController implements InputListener, Listenable<GameStateListen
             for (int index = 0; index < 23; index++) {
                 ChessPiece piece = model.grid[player][index].getPiece();
                 if (piece != null && piece.moved == 1) {
-                    piece.moved = 0;
+                    model.grid[player][index].getPiece().moved=0;
                 }
             }
         }
@@ -184,8 +184,11 @@ public class GameController implements InputListener, Listenable<GameStateListen
      */
     public void roundTest(ChessBoardLocation location) {
         if (round == 3) {
+            model.moveChessPiece(location,0);
             eraseMovement();
+            System.out.println(currentPlayer);
             nextPlayer();
+            System.out.println(currentPlayer);
         } else {
             if (location.getIndex() > 18) {
                 if(rolledNumber0 ==6 || rolledNumber1==6) {
@@ -202,6 +205,8 @@ public class GameController implements InputListener, Listenable<GameStateListen
             return;
         }
         rolledNumber = null;
+        listenerList.forEach(listener -> listener.onPlayerEndRound(currentPlayer));
+        listenerList.forEach(listener -> listener.onPlayerStartRound(currentPlayer));
     }
 
     /**
