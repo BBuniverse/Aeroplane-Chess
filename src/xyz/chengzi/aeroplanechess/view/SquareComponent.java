@@ -49,8 +49,8 @@ public class SquareComponent extends JPanel {
         for (int cutIndex : shortCutIndex) {
             if (cutIndex == this.getIndex()) {
                 g.setColor(color);
-                int x[] = {getWidth() / 2, getWidth(), getWidth() / 2, 0};
-                int y[] = {0, getWidth() / 2, getWidth(), getWidth() / 2};
+                int[] x = {getWidth() / 2, getWidth(), getWidth() / 2, 0};
+                int[] y = {0, getWidth() / 2, getWidth(), getWidth() / 2};
                 g.drawPolygon(x, y, 4);
                 g.fillPolygon(x, y, 4);
             }

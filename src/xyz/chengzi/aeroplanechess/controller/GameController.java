@@ -9,7 +9,6 @@ import xyz.chengzi.aeroplanechess.view.ChessBoardComponent;
 import xyz.chengzi.aeroplanechess.view.ChessComponent;
 import xyz.chengzi.aeroplanechess.view.SquareComponent;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,13 +51,11 @@ public class GameController implements InputListener, Listenable<GameStateListen
     }
 
     public int rollDice() {
-        if(rolledNumber0 == null){
+        if (rolledNumber0 == null) {
             rolledNumber1 = RandomUtil.nextInt(1, 6);
             rolledNumber0 = RandomUtil.nextInt(1, 6);
-            return rolledNumber0;
-        }else {
-            return rolledNumber0;
         }
+        return rolledNumber0;
     }
 
     public int getDice0() {
@@ -81,7 +78,7 @@ public class GameController implements InputListener, Listenable<GameStateListen
             for (int index = 0; index < 23; index++) {
                 ChessPiece piece = model.grid[player][index].getPiece();
                 if (piece != null && piece.moved == 1) {
-                    model.grid[player][index].getPiece().moved=0;
+                    piece.moved = 0;
                 }
             }
         }
@@ -104,7 +101,6 @@ public class GameController implements InputListener, Listenable<GameStateListen
             rolledNumber1 = 1;
         }
         boolean hasASix = rolledNumber0 == 6 || rolledNumber1 == 6;
-        boolean selfHangar = location.getColor() == currentPlayer;
 
         // Record the original location when dice >= 10 for 3 times
         if (roundLocation == null) roundLocation = location;
@@ -116,44 +112,11 @@ public class GameController implements InputListener, Listenable<GameStateListen
 //          if the sum if more than 10
             ChessPiece piece = model.getChessPieceAt(location);
             if (piece.getPlayer() == currentPlayer) {
-                // Manually choose the dice number
-                if (rolledNumber > 100) {
+                // If the mode is cheating
+                if (rolledNumber > 100)
                     rolledNumber /= 100;
 
-                    if (rolledNumber0+rolledNumber1 >= 10) {
-                        roundTest(location);
-                        return;
-                    } else {
-                        if (location.getIndex() > 18) {
-                            if(hasASix) {
-                                model.moveChessPiece(location, 6);
-                            }else{
-                                System.out.println("Manually Need a 6 to land");
-                            }
-                        } else {
-                            model.moveChessPiece(location, rolledNumber);
-                        }
-                        nextPlayer();
-                    }
-
-                } else {
-                    // Random dices
-                    if (rolledNumber0+rolledNumber1 >= 10) {
-                        roundTest(location);
-                        return;
-                    } else {
-                        if (location.getIndex() > 18) {
-                            if(hasASix) {
-                                model.moveChessPiece(location, 6);
-                            }else{
-                                System.out.println("Manually Need a 6 to land");
-                            }
-                        } else {
-                            model.moveChessPiece(location, rolledNumber);
-                        }
-                        nextPlayer();
-                    }
-                }
+                if (moveDetermine(location, hasASix)) return;
 
                 listenerList.forEach(listener -> listener.onPlayerEndRound(currentPlayer));
                 listenerList.forEach(listener -> listener.onPlayerStartRound(currentPlayer));
@@ -168,6 +131,36 @@ public class GameController implements InputListener, Listenable<GameStateListen
 
     }
 
+    /***
+     *
+     * @param location current location
+     * @param hasASix  has a six in two dices or not
+     * @return update the current player or not
+     */
+    private boolean moveDetermine(ChessBoardLocation location, boolean hasASix) {
+        if (rolledNumber0 + rolledNumber1 >= 10) {
+            roundTest(location);
+            return true;
+        } else {
+            if (location.getIndex() > 18) {
+                if (hasASix) {
+                    model.moveChessPiece(location, 6);
+                } else {
+                    System.out.println("Manually Need a 6 to land");
+                }
+            } else {
+                model.moveChessPiece(location, rolledNumber);
+            }
+            nextPlayer();
+        }
+        return false;
+    }
+
+    /***
+     *
+     * @param RolledNumber dice number 1
+     * @param temp cheating mode or random mode
+     */
     public void changeRolledNumber(int RolledNumber, int temp) {
         if (temp == 0) {
             rolledNumber = RolledNumber;
@@ -184,27 +177,23 @@ public class GameController implements InputListener, Listenable<GameStateListen
      */
     public void roundTest(ChessBoardLocation location) {
         if (round == 3) {
-            model.moveChessPiece(location,0);
+            model.moveChessPiece(location, 0);
             eraseMovement();
-            System.out.println(currentPlayer);
             nextPlayer();
-            System.out.println(currentPlayer);
         } else {
             if (location.getIndex() > 18) {
-                if(rolledNumber0 ==6 || rolledNumber1==6) {
+                if (rolledNumber0 == 6 || rolledNumber1 == 6) {
                     model.moveChessPiece(location, 6);
                 }
             } else {
                 model.moveChessPiece(location, rolledNumber);
             }
+            // Empty for the next rolling
             rolledNumber = null;
             rolledNumber0 = null;
             rolledNumber1 = null;
             round++;
-            System.out.println(getClass().toString()+" "+round);
-            return;
         }
-        rolledNumber = null;
         listenerList.forEach(listener -> listener.onPlayerEndRound(currentPlayer));
         listenerList.forEach(listener -> listener.onPlayerStartRound(currentPlayer));
     }
