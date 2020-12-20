@@ -24,9 +24,9 @@ public class ChessBoardComponent extends JComponent implements Listenable<InputL
             Color.GREEN.darker(), Color.RED.darker()};
 
     private final List<InputListener> listenerList = new ArrayList<>();
-    private final SquareComponent[][] gridComponents;
+    public final SquareComponent[][] gridComponents;
     private final int dimension, endDimension;
-    private final int gridSize;
+    public final int gridSize;
 
     /**
      * @param size         760
@@ -52,7 +52,7 @@ public class ChessBoardComponent extends JComponent implements Listenable<InputL
      *
      * @return location
      */
-    private int gridLocation(int player, int index) {
+    public int gridLocation(int player, int index) {
         // FIXME: Calculate proper location for each grid
         int boardIndex = (1 + 13 * player + 4 * index) % (4 * dimension);
         int x, y;
@@ -78,7 +78,7 @@ public class ChessBoardComponent extends JComponent implements Listenable<InputL
      *
      * @return location
      */
-    private int endGridLocation(int player, int index) {
+    public int endGridLocation(int player, int index) {
         // FIXME: Calculate proper location for each end grid
         int beforeEndGridLocation = gridLocation(player, dimension - 1);
         int x = beforeEndGridLocation >> 16, y = beforeEndGridLocation & 0xffff;

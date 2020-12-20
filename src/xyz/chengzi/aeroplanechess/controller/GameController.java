@@ -197,11 +197,15 @@ public class GameController implements InputListener, Listenable<GameStateListen
             eraseMovement();
             nextPlayer();
         } else {
-            if (location.getIndex() > 18) {
-                model.moveChessPiece(location, 6);
-            } else {
-                model.moveChessPiece(location, rolledNumber);
+            for (int i = 0; i <getModel().number_Players; i++) {
+                nextPlayer();
             }
+
+//            if (location.getIndex() > 18) {
+//                model.moveChessPiece(location, 6);
+//            } else {
+//                model.moveChessPiece(location, rolledNumber);
+//            }
             hasBeenMoved = true;
             round++;
         }

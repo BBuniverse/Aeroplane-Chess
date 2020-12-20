@@ -8,9 +8,12 @@ import xyz.chengzi.aeroplanechess.model.ChessPiece;
 import xyz.chengzi.aeroplanechess.model.Square;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.InputEvent;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Observer;
 
 public class GameFrame extends JFrame implements GameStateListener {
     private static final String[] PLAYER_NAMES = {"Yellow", "Blue", "Green", "Red"};
@@ -27,11 +30,7 @@ public class GameFrame extends JFrame implements GameStateListener {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLayout(null);
 
-//        ImageIcon icon=new ImageIcon("..\\Aeroplane-Chess\\src\\xyz\\chengzi\\aeroplanechess\\view\\sky.jpg");
-//        System.out.println(icon);
-//        JLabel label=new JLabel(icon);
-//        label.setBounds(0,0,772,825);
-//        this.add(label,new Integer(Integer.MIN_VALUE));
+
 
 
         statusLabel.setBounds(0, 758, 400, 20);
@@ -75,12 +74,17 @@ public class GameFrame extends JFrame implements GameStateListener {
                         dice * dice1 <= 12 ? dice * dice1 : 0,
                         ((double) Math.max(dice, dice1) / Math.min(dice, dice1)) % 1 == 0 ? div : 0
                 };
+//                if the player is the bot
+                if(controller.getModel().number_Bots >0 && (controller.getCurrentPlayer() >= (controller.getModel().number_Bots))){
+                    make_The_Simple_Bot_Move(steps,controller);
 
-                int index = JOptionPane.showOptionDialog(null, "Returns the option of your choice",
-                        PLAYER_NAMES[controller.getCurrentPlayer()] + " Click a button",
-                        JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+                }else {
+                    int index = JOptionPane.showOptionDialog(null, "Returns the option of your choice",
+                            PLAYER_NAMES[controller.getCurrentPlayer()] + " Click a button",
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
 
-                controller.changeRolledNumber(steps[index], 0);
+                    controller.changeRolledNumber(steps[index], 0);
+                }
             } else {
                 // Manually choose steps
                 String dices = diceSelectorComponent.getSelectedDice().toString();
@@ -119,6 +123,34 @@ public class GameFrame extends JFrame implements GameStateListener {
         option.setFont(option.getFont().deriveFont(18.0f));
         add(option);
     }
+
+    public void make_The_Simple_Bot_Move(int[] steps, GameController controller){
+        JOptionPane.showMessageDialog(this, "Robot chose"+steps[0]);
+        for (int index = 0; index < steps.length; index++) {
+            System.out.println(steps[index]);
+        }
+        controller.changeRolledNumber(steps[0],0);
+        ChessBoardLocation location;
+        boolean find_IT = false;
+        for (int player_Index = 0; player_Index < controller.getModel().INITIAL_PLANES; player_Index++) {
+            for (int position_Index = 0; position_Index < 23; position_Index++) {
+                ChessBoardLocation location_Local = new ChessBoardLocation(player_Index,position_Index);
+                if(controller.getModel().getGridAt(location_Local).getPiece() !=null) {
+                    if (controller.getModel().getGridAt(location_Local).getPiece().getPlayer() == controller.getCurrentPlayer()) {
+                        location = new ChessBoardLocation(player_Index, position_Index);
+                        find_IT = true;
+                        SquareComponent chessBoardComponent = controller.getView().gridComponents[player_Index][position_Index];
+                        controller.onPlayerClickChessPiece(location,(ChessComponent) chessBoardComponent.getComponent(0));
+                        break;
+                    }
+                }
+            }
+            if(find_IT){
+                break;
+            }
+        }
+    }
+
 
     /**
      * @param Controller Current board
