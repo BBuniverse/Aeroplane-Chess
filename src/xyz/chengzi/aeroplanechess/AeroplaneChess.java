@@ -10,6 +10,7 @@ import xyz.chengzi.aeroplanechess.view.GameFrame;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowEvent;
+import java.net.MalformedURLException;
 
 public class AeroplaneChess {
     public static void main(String[] args) {
@@ -85,5 +86,13 @@ public class AeroplaneChess {
             return JOptionPane.showOptionDialog(null, "Clever or Stupid",
                     "AI's cleverness", JOptionPane.DEFAULT_OPTION,JOptionPane.INFORMATION_MESSAGE,
                     null, cleverness,cleverness[0]);
+    }
+    public static void play_Music(){
+//        try{
+//
+//        }catch (MalformedURLException e){
+//
+//        }
+
     }
 }

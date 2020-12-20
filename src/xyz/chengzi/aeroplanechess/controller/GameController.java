@@ -52,9 +52,13 @@ public class GameController implements InputListener, Listenable<GameStateListen
     }
 
     public int rollDice() {
+        if(rolledNumber0 == null){
             rolledNumber1 = RandomUtil.nextInt(1, 6);
             rolledNumber0 = RandomUtil.nextInt(1, 6);
             return rolledNumber0;
+        }else {
+            return rolledNumber0;
+        }
     }
 
     public int getDice0() {
@@ -115,44 +119,40 @@ public class GameController implements InputListener, Listenable<GameStateListen
                 // Manually choose the dice number
                 if (rolledNumber > 100) {
                     rolledNumber /= 100;
-                    if (location.getIndex() > 18 && selfHangar && !hasASix) {
-                        System.out.println("Manually Need a 6 to land");
-                        nextPlayer();
+
+                    if (rolledNumber0+rolledNumber1 >= 10) {
+                        roundTest(location);
+                        return;
                     } else {
-                        if (rolledNumber0+rolledNumber1 >= 10) {
-                            roundTest(location);
-                            return;
-                        } else {
-                            if (location.getIndex() > 18) {
+                        if (location.getIndex() > 18) {
+                            if(hasASix) {
                                 model.moveChessPiece(location, 6);
-                            } else {
-                                model.moveChessPiece(location, rolledNumber);
+                            }else{
+                                System.out.println("Manually Need a 6 to land");
                             }
-                            nextPlayer();
+                        } else {
+                            model.moveChessPiece(location, rolledNumber);
                         }
+                        nextPlayer();
                     }
-                    JOptionPane.showMessageDialog(null, "Please move a plane");
+
                 } else {
                     // Random dices
-                    if (location.getIndex() > 18 && selfHangar && !hasASix) {
-                        System.out.println("Need a 6 to land");
-                        nextPlayer();
+                    if (rolledNumber0+rolledNumber1 >= 10) {
+                        roundTest(location);
+                        return;
                     } else {
-                        // Ready to count for 3 times
-                        System.out.println(rolledNumber);
-                        if (rolledNumber0+rolledNumber1>=10) {
-                            roundTest(location);
-                            return;
-                        } else {
-                            if (location.getIndex() > 18 && selfHangar && hasASix && rolledNumber != 0) {
+                        if (location.getIndex() > 18) {
+                            if(hasASix) {
                                 model.moveChessPiece(location, 6);
-                            } else {
-                                model.moveChessPiece(location, rolledNumber);
+                            }else{
+                                System.out.println("Manually Need a 6 to land");
                             }
-                            nextPlayer();
+                        } else {
+                            model.moveChessPiece(location, rolledNumber);
                         }
+                        nextPlayer();
                     }
-                        JOptionPane.showMessageDialog(null, "Please move a plane");
                 }
 
                 listenerList.forEach(listener -> listener.onPlayerEndRound(currentPlayer));
@@ -188,7 +188,9 @@ public class GameController implements InputListener, Listenable<GameStateListen
             nextPlayer();
         } else {
             if (location.getIndex() > 18) {
-                model.moveChessPiece(location, 6);
+                if(rolledNumber0 ==6 || rolledNumber1==6) {
+                    model.moveChessPiece(location, 6);
+                }
             } else {
                 model.moveChessPiece(location, rolledNumber);
             }
