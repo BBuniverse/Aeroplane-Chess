@@ -15,7 +15,7 @@ public class DiceSelectorComponent extends JComponent implements ItemListener {
         setSize(270, 25);
 
         diceComboBox = new JComboBox<>();
-        for (int i = 1; i <= 6; i++) {
+        for (int i = 0; i <= 6; i++) {
             for (int j = i; j <= 6; j++) {
                 diceComboBox.addItem(i + " " + j);
             }

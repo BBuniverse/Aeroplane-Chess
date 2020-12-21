@@ -24,9 +24,6 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
     public int[] onTheBoardPlanes = {0, 0, 0, 0};
     private final int[] shortCutIndex = {4, 7};
     private boolean game_Over = false;
-//    public ArrayList<ChessBoardLocation> record_Round= new ArrayList<ChessBoardLocation>();
-
-//    public void
 
     /**
      * @param dimension    13
@@ -55,7 +52,7 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
                 grid[i][j].setPiece(null);
             }
         }
-//         FIXME: Demo implementation: initial for four planes at the start position
+        //  FIXME: Demo implementation: initial for four planes at the start position
         for (int player = 0; player < number_Players; player++) {
             for (int initial_Index = dimension + endDimension; initial_Index < dimension + endDimension + INITIAL_PLANES; initial_Index++) {
                 grid[player][initial_Index].setPiece(new ChessPiece(player, 0, 0));
@@ -106,10 +103,12 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
         // FIXME: This just naively move the chess forward without checking anything
         int lColor, lIndex, player = getChessPieceAt(src).getPlayer();
         boolean readyToLand = false, landedOnce = false;
-        if (landed_Planes[player] == 4) {
+        if (landedPlanes(player) == 4) {
+            JOptionPane.showMessageDialog(null, "There are enough airplanes on the board or hangar",
+                    "Too many", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
-        if (steps == 0) {
+        if (steps == 0 || getGridAt(src).getPiece().finished() == 1) {
             return;
         }
         if (game_Over) {
@@ -119,7 +118,7 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
         }
         // Hangar landing part
         if (src.getIndex() > 18) {
-            if (onTheBoardPlanes[player] + landed_Planes[player] < 4) {
+            if (onTheBoardPlanes[player] + landedPlanes(player) < 4) {
                 // Start position
                 ChessBoardLocation startPoint = grid[player][0].getLocation();
                 if (getGridAt(startPoint).getPiece() != null) {
@@ -142,7 +141,6 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
                         tempPiece.moved = 1;
                         setChessPieceAt(startPoint, tempPiece);
                         onTheBoardPlanes[player]++;
-                        //                        record_Round.add(dest);
                         return;
                     }
                 }
@@ -150,11 +148,7 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
                 tempPiece = removeChessPieceAt(src);
                 tempPiece.moved = 1;
                 setChessPieceAt(startPoint, tempPiece);
-                //                record_Round.add(dest);
                 getGridAt(startPoint).number_Of_Planes = 1;
-            } else {
-                JOptionPane.showMessageDialog(null, "There are enough airplanes on the board and hangar",
-                        "Too many", JOptionPane.INFORMATION_MESSAGE);
             }
         } else {
             // Moving on the board
@@ -166,17 +160,11 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
             for (int i = 1; i <= steps; i++) {
                 // Ready to land
                 if (dest.getIndex() >= 12 && player == dest.getColor()) {
-                    if (landedOnce) {
-                        // Turn back
-                        lIndex = dest.getIndex() - 1;
-                    } else {
-                        // Move forward to destination
-                        lIndex = dest.getIndex() + 1;
-                    }
+                    lIndex = landedOnce ? dest.getIndex() - 1 : dest.getIndex() + 1;
+
                     dest = new ChessBoardLocation(player, lIndex);
-                    if (dest.getIndex() == 18) {
-                        landedOnce = true;
-                    }
+
+                    landedOnce = dest.getIndex() == 18;
                     readyToLand = true;
                 } else {
                     // Moving on the board
@@ -193,25 +181,24 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
                     dest = new ChessBoardLocation(lColor, lIndex);
                 }
             }
-            // Steps moving finished
 
             // Jumping moving
             if (!readyToLand && player == dest.getColor() && dest.getIndex() < 12) {
-                dest = nextLocation(dest);
-            } else {
-                // Shortcut moving
-                if (dest.getIndex() == shortCutIndex[0] && player == dest.getColor()) {
-                    dest = new ChessBoardLocation(dest.getColor(), shortCutIndex[1]);
-                }
+                dest = (dest.getIndex() == shortCutIndex[0] && player == dest.getColor()) ?
+                        new ChessBoardLocation(dest.getColor(), shortCutIndex[1]) : nextLocation(dest);
+            }
+            // Shortcut moving
+            if (dest.getIndex() == shortCutIndex[0] && player == dest.getColor()) {
+                dest = new ChessBoardLocation(dest.getColor(), shortCutIndex[1]);
             }
             // Destination has been occupied
             int winner = player;
             if (getGridAt(dest).getPiece() != null) {
                 if (getGridAt(dest).getPiece().getPlayer() != player) {
-                    int numPlanesToHangar = getGridAt(dest).number_Of_Planes;
-                    int removed = numPlanesToHangar;
-                    int playerToHangar = getGridAt(dest).getPiece().getPlayer();
-                    int loser = playerToHangar;
+                    int numPlanesToHangar = getGridAt(dest).number_Of_Planes,
+                            removed = numPlanesToHangar,
+                            playerToHangar = getGridAt(dest).getPiece().getPlayer(),
+                            loser = playerToHangar;
                     // Need to battle
                     if (startPlanes > 1 && numPlanesToHangar > 1) {
                         winner = battle(player, playerToHangar);
@@ -248,14 +235,16 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
                 sendPlanesToHangar(back_Planes, player, 1);
 
                 removeChessPieceAt(dest);
-                landed_Planes[player] += back_Planes;
+                for (int i = 0; i < 4; i++) {
+                    landed_Planes[i] = landedPlanes(i);
+                }
                 onTheBoardPlanes[player] -= back_Planes;
 
                 JOptionPane.showMessageDialog(null, "ChessBoard " + PLAYER_NAMES[player] + " Finish "
                                 + getGridAt(dest).number_Of_Planes + " Planes.",
                         "Finished ", JOptionPane.INFORMATION_MESSAGE);
-                int number_Finished = 0;
-                int index_Loser = -1;
+                int number_Finished = 0,
+                        index_Loser = -1;
                 for (int i = 0; i < landed_Planes.length; i++) {
                     if (landed_Planes[i] == 4) {
                         number_Finished++;
@@ -274,47 +263,21 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
         }
     }
 
-
     /***
      *
-     * @param start_Point   moving from
-     * @param end_Point     moving to
-     * @param player_Itself player
+     * @param Color the player's color
+     * @return the number that this color has been finished
      */
-    private void sendBackPath(ChessBoardLocation start_Point, ChessBoardLocation end_Point, int player_Itself) {
-        int lColor, lIndex;
-        int index = 0;
-        for (int j = 0; j < movingList.length; j++) {
-            if (movingList[j] == start_Point.getIndex()) {
-                index = j;
-                break;
+    public int landedPlanes(int Color) {
+        int num = 0;
+        for (int i = 19; i < 23; i++) {
+            ChessBoardLocation location = new ChessBoardLocation(Color, i);
+            ChessPiece chessPiece = getGridAt(location).getPiece();
+            if (chessPiece != null && chessPiece.finished() == 1) {
+                num++;
             }
         }
-        ChessBoardLocation next_Position;
-        lColor = (start_Point.getColor()) % 4;
-        lIndex = movingList[(index) % movingList.length];
-
-        next_Position = new ChessBoardLocation(lColor, lIndex);
-
-        while (next_Position.getColor() != end_Point.getColor() || next_Position.getIndex() != end_Point.getIndex()) {
-            if (getChessPieceAt(next_Position) != null && getChessPieceAt(next_Position).getPlayer() != player_Itself) {
-                int playerToHangar = getChessPieceAt(next_Position).getPlayer();
-                int numPlanesToHangar = getGridAt(next_Position).number_Of_Planes;
-                getGridAt(next_Position).number_Of_Planes = 0;
-                sendPlanesToHangar(playerToHangar, numPlanesToHangar, 0);
-            }
-
-            lColor = (next_Position.getColor() + 1) % 4;
-
-            for (int j = 0; j < movingList.length; j++) {
-                if (movingList[j] == next_Position.getIndex()) {
-                    index = j;
-                    break;
-                }
-            }
-            lIndex = movingList[(index + 1) % movingList.length];
-            next_Position = new ChessBoardLocation(lColor, lIndex);
-        }
+        return num;
     }
 
     /***
@@ -375,5 +338,47 @@ public class ChessBoard implements Listenable<ChessBoardListener> {
     @Override
     public void unregisterListener(ChessBoardListener listener) {
         listenerList.remove(listener);
+    }
+
+    /***
+     *
+     * @param start_Point   moving from
+     * @param end_Point     moving to
+     * @param player_Itself player
+     */
+    private void sendBackPath(ChessBoardLocation start_Point, ChessBoardLocation end_Point, int player_Itself) {
+        int lColor, lIndex;
+        int index = 0;
+        for (int j = 0; j < movingList.length; j++) {
+            if (movingList[j] == start_Point.getIndex()) {
+                index = j;
+                break;
+            }
+        }
+        ChessBoardLocation next_Position;
+        lColor = (start_Point.getColor()) % 4;
+        lIndex = movingList[(index) % movingList.length];
+
+        next_Position = new ChessBoardLocation(lColor, lIndex);
+
+        while (next_Position.getColor() != end_Point.getColor() || next_Position.getIndex() != end_Point.getIndex()) {
+            if (getChessPieceAt(next_Position) != null && getChessPieceAt(next_Position).getPlayer() != player_Itself) {
+                int playerToHangar = getChessPieceAt(next_Position).getPlayer();
+                int numPlanesToHangar = getGridAt(next_Position).number_Of_Planes;
+                getGridAt(next_Position).number_Of_Planes = 0;
+                sendPlanesToHangar(playerToHangar, numPlanesToHangar, 0);
+            }
+
+            lColor = (next_Position.getColor() + 1) % 4;
+
+            for (int j = 0; j < movingList.length; j++) {
+                if (movingList[j] == next_Position.getIndex()) {
+                    index = j;
+                    break;
+                }
+            }
+            lIndex = movingList[(index + 1) % movingList.length];
+            next_Position = new ChessBoardLocation(lColor, lIndex);
+        }
     }
 }
