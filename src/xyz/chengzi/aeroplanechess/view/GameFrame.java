@@ -131,7 +131,7 @@ public class GameFrame extends JFrame implements GameStateListener {
 
     public void make_The_Simple_Bot_Move(int[] steps, GameController controller) {
         JOptionPane.showMessageDialog(this, "Robot chose " + steps[0] +
-                "(" + controller.getDice0() + " + " + controller.getDice1() + ")");
+                " from (" + controller.getDice0() + " , " + controller.getDice1() + ")");
         controller.changeRolledNumber(steps[0], 0);
         ChessBoardLocation location;
         for (int player_Index = 0; player_Index < controller.getModel().INITIAL_PLANES; player_Index++) {
@@ -151,32 +151,41 @@ public class GameFrame extends JFrame implements GameStateListener {
 
     public void make_The_Smarter_Bot_Move(int[] steps, GameController controller) {
         int steps_Choose = steps[0];
-        for (int index = 0; index < steps.length; index++) {
-            if (steps[index] > steps_Choose) {
-                steps_Choose = steps[index];
-            }
-        }
-        controller.changeRolledNumber(steps_Choose, 0);
-        JOptionPane.showMessageDialog(this, "Robot chose " + steps_Choose +
-                "(" + controller.getDice0() + " + " + controller.getDice1() + ")");
+
         ChessBoardLocation location;
-        boolean find_IT = false;
 
         for (int player_Index = 0; player_Index < controller.getModel().INITIAL_PLANES; player_Index++) {
             for (int position_Index = 0; position_Index < 23; position_Index++) {
                 ChessBoardLocation location_Local = new ChessBoardLocation(player_Index, position_Index);
                 if (controller.getModel().getGridAt(location_Local).getPiece() != null) {
+
                     if (controller.getModel().getGridAt(location_Local).getPiece().getPlayer() == controller.getCurrentPlayer()) {
                         location = new ChessBoardLocation(player_Index, position_Index);
-                        find_IT = true;
+                        int difference;
+                        if(position_Index >= 12 && position_Index <= 18){
+                            for (int index = 0; index < steps.length; index++) {
+                                difference = Math.abs(steps[index] + position_Index-18);
+                                if(difference <= Math.abs(steps_Choose+position_Index - 18)){
+                                    steps_Choose = steps[index];
+                                }
+                            }
+                        }else{
+                            for (int index = 0; index < steps.length; index++) {
+                                if(steps[index] > steps_Choose){
+                                    steps_Choose = steps[index];
+                                }
+                            }
+                        }
+                        controller.changeRolledNumber(steps_Choose, 0);
+                        JOptionPane.showMessageDialog(this, "Robot chose " + steps_Choose +
+                                " from (" + controller.getDice0() + " , " + controller.getDice1() + ")");
+
                         SquareComponent chessBoardComponent = controller.getView().gridComponents[player_Index][position_Index];
                         controller.onPlayerClickChessPiece(location, (ChessComponent) chessBoardComponent.getComponent(0));
-                        break;
+
+                        return;
                     }
                 }
-            }
-            if (find_IT) {
-                break;
             }
         }
     }
