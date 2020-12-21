@@ -162,17 +162,23 @@ public class GameFrame extends JFrame implements GameStateListener {
                     if (controller.getModel().getGridAt(location_Local).getPiece().getPlayer() == controller.getCurrentPlayer()) {
                         location = new ChessBoardLocation(player_Index, position_Index);
                         int difference;
-                        if(position_Index >= 12 && position_Index <= 18){
-                            for (int index = 0; index < steps.length; index++) {
-                                difference = Math.abs(steps[index] + position_Index-18);
-                                if(difference <= Math.abs(steps_Choose+position_Index - 18)){
-                                    steps_Choose = steps[index];
-                                }
-                            }
-                        }else{
-                            for (int index = 0; index < steps.length; index++) {
-                                if(steps[index] > steps_Choose){
-                                    steps_Choose = steps[index];
+                        if(controller.getModel().onTheBoardPlanes[controller.getCurrentPlayer()] != 0) {
+                            if(position_Index > 18){
+                                break;
+                            }else {
+                                if (position_Index >= 12) {
+                                    for (int index = 0; index < steps.length; index++) {
+                                        difference = Math.abs(steps[index] + position_Index - 18);
+                                        if (difference <= Math.abs(steps_Choose + position_Index - 18)) {
+                                            steps_Choose = steps[index];
+                                        }
+                                    }
+                                } else {
+                                    for (int index = 0; index < steps.length; index++) {
+                                        if (steps[index] > steps_Choose) {
+                                            steps_Choose = steps[index];
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -253,9 +259,9 @@ public class GameFrame extends JFrame implements GameStateListener {
             Date date = new Date();
             String filename = PLAYER_NAMES[Controller.getCurrentPlayer()] + "-" + sdf.format(date);
             File file;
-            FileWriter out;
+            BufferedWriter out;
             file = new File("..\\Aeroplane-Chess\\localgame\\" + filename + ".txt");
-            out = new FileWriter(file);
+            out =new BufferedWriter( new FileWriter(file));
 
             ChessBoard board = Controller.getModel();
             for (int player = 0; player < 4; player++) {
